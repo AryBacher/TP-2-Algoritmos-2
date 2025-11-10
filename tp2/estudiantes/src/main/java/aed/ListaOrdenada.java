@@ -1,13 +1,19 @@
 package aed;
 
-public class ListaOrdenada<T> {
-    private T[] valores;
+import aed.MinHeap.Handle;
 
-    public ListaOrdenada(){
-        valores = (T[]) new Object[0];
+public class ListaOrdenada<T> {
+    private MinHeap.Handle[] valores;
+
+    public ListaOrdenada(int tamaño, Handle[] estudiantes){
+        valores = new Handle[tamaño];
+
+        for (int i = 0; i < tamaño; i++){
+            valores[i] = estudiantes[i];
+        }
     }
 
-    public void agregar(T est){
-        
+    public MinHeap.Handle accederAPosicion(int posicion){
+        return valores[posicion];
     }
 }

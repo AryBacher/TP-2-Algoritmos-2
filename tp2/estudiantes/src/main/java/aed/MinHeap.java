@@ -1,42 +1,58 @@
 package aed;
 
 public class MinHeap {
-    private int[] _puntajes;
-    private int[] _ids;
-    private Estudiante[] _estudiantes;
+    private Handle[] _estudiantes;
     private int _tamaño;
 
     // FIJARSE QUE HAY QUE TENER EL ID TAMBIÉN PARA DESEMPATAR POR ID.
     // ME SIRVE TAMBIÉN COMO MI VUELTA A LA LISTA DE HANDLES. ACORDARSE DE ESTO
 
-    public MinHeap(int[] puntajes) {
-        _puntajes = puntajes;
-        _tamaño = _puntajes.length;
-        
-        _ids = new int[_tamaño];
-        for (int i = 0; i <= _tamaño; i++){
-            _ids[i] = i;
-        }
+    public MinHeap(Handle[] estudiantes) {
+        _estudiantes = estudiantes;
+        _tamaño = _estudiantes.length;
 
         int primerPadre = padre(_tamaño - 1);
 
         for (int i = primerPadre; i >= 0; i--) {
-            heapify(_puntajes[i]);
+            heapify(i);
         }
     }
 
-    public class HandleHeap {
+    public class Handle {
         private Estudiante _estudiante;
         private int _posicionHeap;
 
-        private HandleHeap(Estudiante est, int posicion){
+        private Handle(Estudiante est, int posicion){
             _estudiante = est;
             _posicionHeap = posicion;
         }
 
-        public void ejemplo(){
-            MinHeap.this.heapify(1);
+        public boolean esMenorQue(Handle otro) {
+            if (otro == null) {
+                throw new IllegalArgumentException("No puede compararse con null");
+            }
+
+            else if (this._estudiante.puntaje() != otro._estudiante.puntaje()) {
+                return this._estudiante.puntaje() < otro._estudiante.puntaje();
+            }
+
+            return this._estudiante.id() < otro._estudiante.id();
         }
+
+        public int puntaje(){
+            return _estudiante.puntaje();
+        }
+
+        public void actualizarPosicion(int posicion){
+            _posicionHeap = posicion;
+        }
+
+        public Estudiante estudiante() {return _estudiante;}
+        public int posicionHeap() {return _posicionHeap;}
+
+        // public void ejemplo(){
+        //     MinHeap.this.heapify(1);
+        // }
     }
 
     private int padre(int posicion) {
@@ -51,45 +67,50 @@ public class MinHeap {
         return 2 * posicion + 2;
     }
 
+    private void intercambiar(int padre, int hijo){
+        Handle nuevo_puntaje = _estudiantes[hijo];
+        
+        _estudiantes[hijo] = _estudiantes[padre];
+        _estudiantes[padre] = nuevo_puntaje;
+
+        _estudiantes[hijo].actualizarPosicion(hijo);
+        _estudiantes[padre].actualizarPosicion(padre);
+
+        // Caso 1
+        // Handle nuevo_puntaje = _estudiantes[hijo_izq(padre)];
+                
+        // _estudiantes[hijo_izq(padre)] = _estudiantes[padre];
+        // _estudiantes[padre] = nuevo_puntaje;
+
+
+        // Caso 2
+        // Handle nuevo_puntaje = _estudiantes[hijo_der(padre)];
+                
+        // _estudiantes[hijo_der(padre)] = _estudiantes[padre];
+        // _estudiantes[padre] = nuevo_puntaje;
+    }
+
     private void heapify(int padre){
         // Caso Base
         if (hijo_izq(padre) >= _tamaño) return;
         
         // Caso recursivo
         else if (hijo_izq(padre) == _tamaño - 1) {
-            if (_puntajes[padre] > _puntajes[hijo_izq(padre)]) {
-                int nuevo_padre = _puntajes[hijo_izq(padre)];
-
-                _puntajes[hijo_izq(padre)] = _puntajes[padre];
-                _puntajes[padre] = nuevo_padre;
-
-                _ids[hijo_izq(padre)] = _ids[padre];
-                _ids[padre] = nuevo_padre;
+            if (! _estudiantes[padre].esMenorQue(_estudiantes[hijo_izq(padre)])){
+                intercambiar(padre, hijo_izq(padre));
             }
         }
 
         else {
-            if (_puntajes[padre] > _puntajes[hijo_izq(padre)] || _puntajes[padre] > _puntajes[hijo_der(padre)]) {
-                if(hijo_izq(padre) < hijo_der(padre)) {
-                    int nuevo_padre = _puntajes[hijo_izq(padre)];
-
-                    _puntajes[hijo_izq(padre)] = _puntajes[padre];
-                    _puntajes[padre] = nuevo_padre;
-
-                    _ids[hijo_izq(padre)] = _puntajes[padre];
-                    _ids[padre] = nuevo_padre;
+            if (! _estudiantes[padre].esMenorQue(_estudiantes[hijo_izq(padre)]) || ! _estudiantes[padre].esMenorQue(_estudiantes[hijo_der(padre)])) {
+                if(_estudiantes[hijo_izq(padre)].esMenorQue(_estudiantes[hijo_der(padre)])) {
+                    intercambiar(padre, hijo_izq(padre));
 
                     heapify(hijo_izq(padre));
                 } 
                 
                 else {
-                    int nuevo_padre = _puntajes[hijo_der(padre)];
-
-                    _puntajes[hijo_der(padre)] = _puntajes[padre];
-                    _puntajes[padre] = nuevo_padre;
-
-                    _ids[hijo_der(padre)] = _puntajes[padre];
-                    _ids[padre] = nuevo_padre;
+                    intercambiar(padre, hijo_der(padre));
 
                     heapify(hijo_der(padre));
                 }
@@ -97,34 +118,42 @@ public class MinHeap {
         }
     }
 
-    public int desencolar(){
-        int aDevolver = _puntajes[0];
-        
-        _puntajes[0] = _puntajes[_tamaño - 1]; 
-        _puntajes[_tamaño - 1] = -1;
+    public Handle desencolar(){
 
-        _tamaño = _tamaño - 1;
+        if (_tamaño > 0){
+            Handle aDevolver = _estudiantes[0];
 
-        heapify(0);
+            if (_tamaño == 1){
+                _estudiantes[0] = null;    
+            }
 
-        return aDevolver;
+            else {
+                _estudiantes[0] = _estudiantes[_tamaño - 1]; 
+                _estudiantes[_tamaño - 1] = null;
+
+                _tamaño = _tamaño - 1;
+
+                heapify(0);
+            }
+
+            return aDevolver;
+        }
+
+        return null;
     }
 
-    public void encolar(int elemento){
+    public void encolar(Handle elemento){
         // Encuentro el primer -1 que hay en mi lista y lo piso con mi elemento a encolar. 
         // Como para encolar requiero que se haya desencolado, entonces _puntajes[tamaño] nunca se va a ir de rango. 
-        _puntajes[_tamaño] = elemento;
+        _estudiantes[_tamaño] = elemento;
         _tamaño = _tamaño + 1;
 
         subir(_tamaño - 1);
     }
 
     private void subir(int posicion){
-        while (posicion != 0 && _puntajes[padre(posicion)] > _puntajes[posicion]){
-            int nuevo_padre = _puntajes[posicion];
-
-            _puntajes[posicion] = _puntajes[padre(posicion)];
-            _puntajes[padre(posicion)] = nuevo_padre;
+        while (posicion != 0 && ! _estudiantes[padre(posicion)].esMenorQue(_estudiantes[posicion])){
+            intercambiar(padre(posicion), posicion);
 
             posicion = padre(posicion);
         }
