@@ -2,6 +2,8 @@ package aed;
 
 public class MinHeap {
     private int[] _puntajes;
+    private int[] _ids;
+    private Estudiante[] _estudiantes;
     private int _tamaño;
 
     // FIJARSE QUE HAY QUE TENER EL ID TAMBIÉN PARA DESEMPATAR POR ID.
@@ -10,11 +12,30 @@ public class MinHeap {
     public MinHeap(int[] puntajes) {
         _puntajes = puntajes;
         _tamaño = _puntajes.length;
+        
+        _ids = new int[_tamaño];
+        for (int i = 0; i <= _tamaño; i++){
+            _ids[i] = i;
+        }
 
         int primerPadre = padre(_tamaño - 1);
 
         for (int i = primerPadre; i >= 0; i--) {
-            heapify(_puntajes[i]);    
+            heapify(_puntajes[i]);
+        }
+    }
+
+    public class HandleHeap {
+        private Estudiante _estudiante;
+        private int _posicionHeap;
+
+        private HandleHeap(Estudiante est, int posicion){
+            _estudiante = est;
+            _posicionHeap = posicion;
+        }
+
+        public void ejemplo(){
+            MinHeap.this.heapify(1);
         }
     }
 
@@ -41,6 +62,9 @@ public class MinHeap {
 
                 _puntajes[hijo_izq(padre)] = _puntajes[padre];
                 _puntajes[padre] = nuevo_padre;
+
+                _ids[hijo_izq(padre)] = _ids[padre];
+                _ids[padre] = nuevo_padre;
             }
         }
 
@@ -52,6 +76,9 @@ public class MinHeap {
                     _puntajes[hijo_izq(padre)] = _puntajes[padre];
                     _puntajes[padre] = nuevo_padre;
 
+                    _ids[hijo_izq(padre)] = _puntajes[padre];
+                    _ids[padre] = nuevo_padre;
+
                     heapify(hijo_izq(padre));
                 } 
                 
@@ -61,6 +88,9 @@ public class MinHeap {
                     _puntajes[hijo_der(padre)] = _puntajes[padre];
                     _puntajes[padre] = nuevo_padre;
 
+                    _ids[hijo_der(padre)] = _puntajes[padre];
+                    _ids[padre] = nuevo_padre;
+
                     heapify(hijo_der(padre));
                 }
             }
@@ -68,7 +98,7 @@ public class MinHeap {
     }
 
     public int desencolar(){
-        int aDevolver = _puntajes[_tamaño - 1];
+        int aDevolver = _puntajes[0];
         
         _puntajes[0] = _puntajes[_tamaño - 1]; 
         _puntajes[_tamaño - 1] = -1;
