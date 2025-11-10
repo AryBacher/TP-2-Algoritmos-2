@@ -5,7 +5,7 @@ public class MinHeap {
     private int _tamaño;
 
     // FIJARSE QUE HAY QUE TENER EL ID TAMBIÉN PARA DESEMPATAR POR ID.
-    // ME SIRVE TAMBIÉN COMO MI VUELTA A LA LISTA DE HANDLES.
+    // ME SIRVE TAMBIÉN COMO MI VUELTA A LA LISTA DE HANDLES. ACORDARSE DE ESTO
 
     public MinHeap(int[] puntajes) {
         _puntajes = puntajes;
