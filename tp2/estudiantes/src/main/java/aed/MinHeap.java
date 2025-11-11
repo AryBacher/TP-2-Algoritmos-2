@@ -52,6 +52,10 @@ public class MinHeap {
             _estudiante.cambiarRespuesta(posicion, respuesta);
         }
 
+        public void actualizarPuntajeRapido(int[] examenCanonico, int ejercicio){
+            _estudiante.actualizarPuntajeRapido(examenCanonico, ejercicio);
+        }
+
         public void actualizarPuntaje(int[] examenCanonico){
             _estudiante.actualizarPuntaje(examenCanonico);
         }

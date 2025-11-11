@@ -188,8 +188,12 @@ public class Edr {
 
 
     public void resolver(int estudiante, int NroEjercicio, int res) {
-        throw new UnsupportedOperationException("Sin implementar");
-    }
+        MinHeap.Handle est = _listaOrdenada.accederAPosicion(estudiante);
+        est.actualizarRespuesta(NroEjercicio, res);
+        est.actualizarPuntajeRapido(_examenCanonico, NroEjercicio);
+    } 
+
+    
 
 
 

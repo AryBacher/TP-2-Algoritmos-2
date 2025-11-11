@@ -6,12 +6,14 @@ public class Estudiante {
     private int _puntaje;
     private boolean _entrego;
     private int[] _respuestas;
+    private int _cantRespuestasCorrectas;
 
     public Estudiante(int id, int cantRespuestas) {
         _puntaje = 0;
         _entrego = false;
         _id = id;
         _respuestas = new int[cantRespuestas];
+        _cantRespuestasCorrectas = 0;
 
         for (int i = 0; i < cantRespuestas; i ++){
             _respuestas[i] = -1;
@@ -34,7 +36,14 @@ public class Estudiante {
                 cantRespuestasCorrectas ++;
             }
         }
-
+        _cantRespuestasCorrectas = cantRespuestasCorrectas;
         _puntaje = (int) Math.floor(cantRespuestasCorrectas * 100 / examenCanonico.length);
+    }
+    
+    public void actualizarPuntajeRapido(int[] examenCanonico, int ejercicio){
+        if(examenCanonico[ejercicio] == _respuestas[ejercicio]){
+            _cantRespuestasCorrectas ++;
+            _puntaje = (int) Math.floor(_cantRespuestasCorrectas * 100 / examenCanonico.length);
+        }
     }
 }
