@@ -16,12 +16,6 @@ public class MinHeap {
 
         _estudiantes = listaEstudiantes;
         _tamaño = _estudiantes.length;
-
-        int primerPadre = padre(_tamaño - 1);
-
-        for (int i = primerPadre; i >= 0; i--) {
-            heapify(i);
-        }
     }
 
     public class Handle {
@@ -45,20 +39,26 @@ public class MinHeap {
             return this._estudiante.id() < otro._estudiante.id();
         }
 
-        public int puntaje(){
-            return _estudiante.puntaje();
-        }
-
         public void actualizarPosicion(int posicion){
             _posicionHeap = posicion;
         }
 
         public Estudiante estudiante() {return _estudiante;}
         public int posicionHeap() {return _posicionHeap;}
+        public int puntaje() {return _estudiante.puntaje();}
+        public int[] respuestas() {return _estudiante.respuestas();}
 
-        // public void ejemplo(){
-        //     MinHeap.this.heapify(1);
-        // }
+        public void actualizarRespuesta(int posicion, int respuesta){
+            _estudiante.cambiarRespuesta(posicion, respuesta);
+        }
+
+        public void actualizarPuntaje(int[] examenCanonico){
+            _estudiante.actualizarPuntaje(examenCanonico);
+        }
+
+        public void actualizarHeap(int posicion){
+            MinHeap.this.actualizar(posicion);
+        }
     }
 
     private int padre(int posicion) {
@@ -102,8 +102,18 @@ public class MinHeap {
         for (int i = 0; i < _estudiantes.length; i++){
             res.cambiarValor(i, _estudiantes[i]);
         }
+
+        algoritmoDeFloyd();
         
         return res;
+    }
+
+    private void algoritmoDeFloyd(){
+        int primerPadre = padre(_tamaño - 1);
+
+        for (int i = primerPadre; i >= 0; i--) {
+            heapify(i);
+        }
     }
 
     private void heapify(int padre){

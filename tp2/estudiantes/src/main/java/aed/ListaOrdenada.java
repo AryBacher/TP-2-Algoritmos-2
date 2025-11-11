@@ -7,10 +7,6 @@ public class ListaOrdenada<T> {
 
     public ListaOrdenada(int tamaño){
         valores = new Handle[tamaño];
-
-        // for (int i = 0; i < tamaño; i++){
-        //     valores[i] = estudiantes[i];
-        // }
     }
 
     public void cambiarValor(int posicion, Handle valor){
@@ -19,5 +15,9 @@ public class ListaOrdenada<T> {
 
     public MinHeap.Handle accederAPosicion(int posicion){
         return valores[posicion];
+    }
+
+    public int longitud(){
+        return valores.length;
     }
 }

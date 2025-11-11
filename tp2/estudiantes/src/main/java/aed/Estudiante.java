@@ -11,6 +11,7 @@ public class Estudiante {
         _puntaje = 0;
         _entrego = false;
         _id = id;
+        _respuestas = new int[cantRespuestas];
 
         for (int i = 0; i < cantRespuestas; i ++){
             _respuestas[i] = -1;
@@ -21,4 +22,19 @@ public class Estudiante {
     public boolean entrego() {return _entrego;}
     public int[] respuestas() {return _respuestas;}
     public int id() {return _id;}
+
+    public void cambiarRespuesta(int posicion, int respuesta){
+        _respuestas[posicion] = respuesta;
+    }
+
+    public void actualizarPuntaje(int[] examenCanonico){
+        int cantRespuestasCorrectas = 0;
+        for (int i = 0; i < examenCanonico.length; i ++){
+            if (_respuestas[i] == examenCanonico[i]){
+                cantRespuestasCorrectas ++;
+            }
+        }
+
+        _puntaje = (int) Math.floor(cantRespuestasCorrectas * 100 / examenCanonico.length);
+    }
 }
