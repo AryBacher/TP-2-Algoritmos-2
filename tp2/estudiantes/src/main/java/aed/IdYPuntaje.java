@@ -20,4 +20,8 @@ public class IdYPuntaje {
 
         return this._id < otro._id;
     }
+
+    public int actualizarPosicion(int a, int b){
+        return a;
+    }
 }

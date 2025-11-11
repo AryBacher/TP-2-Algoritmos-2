@@ -43,9 +43,9 @@ public class MinHeap {
         //     return _estudiante.puntaje();
         // }
 
-        public void actualizarPosicion(int posicion){
-            _posicionHeap = posicion;
-        }
+        // public void actualizarPosicion(int posicion){
+        //     _posicionHeap = posicion;
+        // }
 
         public Estudiante estudiante() {return _estudiante;}
         public int posicionHeap() {return _posicionHeap;}
@@ -73,8 +73,8 @@ public class MinHeap {
         _estudiantes[hijo] = _estudiantes[padre];
         _estudiantes[padre] = nuevo_puntaje;
 
-        _estudiantes[hijo].actualizarPosicion(hijo);
-        _estudiantes[padre].actualizarPosicion(padre);
+        _estudiantes[hijo].actualizarPosicion(hijo, padre);
+        _estudiantes[padre].actualizarPosicion(padre, hijo);
 
         // Caso 1
         // Handle nuevo_puntaje = _estudiantes[hijo_izq(padre)];
