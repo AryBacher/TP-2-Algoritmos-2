@@ -7,8 +7,14 @@ public class MinHeap {
     // FIJARSE QUE HAY QUE TENER EL ID TAMBIÉN PARA DESEMPATAR POR ID.
     // ME SIRVE TAMBIÉN COMO MI VUELTA A LA LISTA DE HANDLES. ACORDARSE DE ESTO
 
-    public MinHeap(Handle[] estudiantes) {
-        _estudiantes = estudiantes;
+    public MinHeap(Estudiante[] estudiantes) {
+        Handle[] listaEstudiantes = new Handle[estudiantes.length];
+
+        for (int i = 0; i < listaEstudiantes.length; i ++){
+            listaEstudiantes[i] = new Handle(estudiantes[i], i);
+        }
+
+        _estudiantes = listaEstudiantes;
         _tamaño = _estudiantes.length;
 
         int primerPadre = padre(_tamaño - 1);
@@ -22,7 +28,7 @@ public class MinHeap {
         private Estudiante _estudiante;
         private int _posicionHeap;
 
-        private Handle(Estudiante est, int posicion){
+        public Handle(Estudiante est, int posicion){
             _estudiante = est;
             _posicionHeap = posicion;
         }
@@ -88,6 +94,16 @@ public class MinHeap {
                 
         // _estudiantes[hijo_der(padre)] = _estudiantes[padre];
         // _estudiantes[padre] = nuevo_puntaje;
+    }
+
+    public ListaOrdenada<Handle> heapToList(){
+        ListaOrdenada<Handle> res = new ListaOrdenada<Handle>(_estudiantes.length);
+        
+        for (int i = 0; i < _estudiantes.length; i++){
+            res.cambiarValor(i, _estudiantes[i]);
+        }
+        
+        return res;
     }
 
     private void heapify(int padre){
