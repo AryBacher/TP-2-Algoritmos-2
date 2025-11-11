@@ -1,13 +1,13 @@
 package aed;
 
 public class MinHeap {
-    private Handle[] _estudiantes;
+    private IdYPuntaje[] _estudiantes;
     private int _tamaño;
 
     // FIJARSE QUE HAY QUE TENER EL ID TAMBIÉN PARA DESEMPATAR POR ID.
     // ME SIRVE TAMBIÉN COMO MI VUELTA A LA LISTA DE HANDLES. ACORDARSE DE ESTO
 
-    public MinHeap(Handle[] estudiantes) {
+    public MinHeap(IdYPuntaje[] estudiantes) {
         _estudiantes = estudiantes;
         _tamaño = _estudiantes.length;
 
@@ -27,21 +27,21 @@ public class MinHeap {
             _posicionHeap = posicion;
         }
 
-        public boolean esMenorQue(Handle otro) {
-            if (otro == null) {
-                throw new IllegalArgumentException("No puede compararse con null");
-            }
+        // public boolean esMenorQue(Handle otro) {
+        //     if (otro == null) {
+        //         throw new IllegalArgumentException("No puede compararse con null");
+        //     }
 
-            else if (this._estudiante.puntaje() != otro._estudiante.puntaje()) {
-                return this._estudiante.puntaje() < otro._estudiante.puntaje();
-            }
+        //     else if (this._estudiante.puntaje() != otro._estudiante.puntaje()) {
+        //         return this._estudiante.puntaje() < otro._estudiante.puntaje();
+        //     }
 
-            return this._estudiante.id() < otro._estudiante.id();
-        }
+        //     return this._estudiante.id() < otro._estudiante.id();
+        // }
 
-        public int puntaje(){
-            return _estudiante.puntaje();
-        }
+        // public int puntaje(){
+        //     return _estudiante.puntaje();
+        // }
 
         public void actualizarPosicion(int posicion){
             _posicionHeap = posicion;
@@ -68,7 +68,7 @@ public class MinHeap {
     }
 
     private void intercambiar(int padre, int hijo){
-        Handle nuevo_puntaje = _estudiantes[hijo];
+        IdYPuntaje nuevo_puntaje = _estudiantes[hijo];
         
         _estudiantes[hijo] = _estudiantes[padre];
         _estudiantes[padre] = nuevo_puntaje;
@@ -118,10 +118,9 @@ public class MinHeap {
         }
     }
 
-    public Handle desencolar(){
-
+    public IdYPuntaje desencolar(){
         if (_tamaño > 0){
-            Handle aDevolver = _estudiantes[0];
+            IdYPuntaje aDevolver = _estudiantes[0];
 
             if (_tamaño == 1){
                 _estudiantes[0] = null;    
@@ -142,7 +141,7 @@ public class MinHeap {
         return null;
     }
 
-    public void encolar(Handle elemento){
+    public void encolar(IdYPuntaje elemento){
         // Encuentro el primer -1 que hay en mi lista y lo piso con mi elemento a encolar. 
         // Como para encolar requiero que se haya desencolado, entonces _puntajes[tamaño] nunca se va a ir de rango. 
         _estudiantes[_tamaño] = elemento;
