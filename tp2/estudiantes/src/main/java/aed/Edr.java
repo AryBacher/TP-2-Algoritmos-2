@@ -1,5 +1,7 @@
 package aed;
 import java.util.ArrayList;
+import java.util.logging.Handler;
+
 import aed.MinHeap.Handle;
 
 public class Edr {
@@ -8,12 +10,15 @@ public class Edr {
     private int _ladoAula;
     private int[] _examenCanonico;
     private int _cantEstudiantes;
+    private Handle[] _entregados;
 
     // PREGUNTAR SI ESTÁ BIEN ASUMIR QUE LAS RESPUESTAS DE LOS EJERCICIOS SON
     // NÚMEROS POSITIVOS. CUANDO INICIALIZAMOS, PONEMOS TODOS LOS VALORES EN -1
 
     // HACER DOS MÉTODOS PARA VECINOS, EN LOS QUE ME FIJO SI ESTOY EN PRIMERA FILA,
     // SOY EL ÚLTIMO. HACER ESTO PARA AHORRAR LÍNEAS DE CÓDIGO 
+
+    // AL FINAL HEAPIFY NO ERA HEAPIFY, LA OPERACIÓN DE HWAPIFY ES LA DE BAJAR
 
     public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) {
         _ladoAula = LadoAula;
@@ -26,6 +31,7 @@ public class Edr {
         _listaOrdenada = _minHeap.heapToList();
 
         _cantEstudiantes = Cant_estudiantes;
+        _entregados = new Handle[_cantEstudiantes];
     }
 
     public Estudiante[] listaDeEstudiantes(int cantEstudiantes, int cantRespuestas){
@@ -80,16 +86,16 @@ public class Edr {
 
             if (maximo != 0){
                 int i = 0;
-                int[] misRespuestas = _listaOrdenada.accederAPosicion(estudiante).respuestas();
+                MinHeap.Handle miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
+                int[] misRespuestas = miEstudiante.respuestas();
                 int[] respuestasVecino = _listaOrdenada.accederAPosicion(idMaximo).respuestas();
 
                 while (!(misRespuestas[i] == -1 && respuestasVecino[i] != -1)){
                     i++;
                 }
 
-                _listaOrdenada.accederAPosicion(estudiante).actualizarRespuesta(i, respuestasVecino[i]);
-                _listaOrdenada.accederAPosicion(estudiante).actualizarPuntaje(_examenCanonico);
-                _listaOrdenada.accederAPosicion(estudiante).actualizarHeap(estudiante);
+                miEstudiante.actualizarRespuestaRapido(i, respuestasVecino[i], _examenCanonico);
+                miEstudiante.actualizarHeap(miEstudiante.posicionHeap());
             }
         }
     }
@@ -188,9 +194,10 @@ public class Edr {
 
 
     public void resolver(int estudiante, int NroEjercicio, int res) {
-        MinHeap.Handle est = _listaOrdenada.accederAPosicion(estudiante);
-        est.actualizarRespuesta(NroEjercicio, res);
-        est.actualizarPuntajeRapido(_examenCanonico, NroEjercicio);
+        MinHeap.Handle miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
+        
+        miEstudiante.actualizarRespuestaRapido(NroEjercicio, res, _examenCanonico);
+        miEstudiante.actualizarHeap(miEstudiante.posicionHeap());
     } 
 
     
@@ -200,14 +207,31 @@ public class Edr {
 //------------------------------------------------CONSULTAR DARK WEB-------------------------------------------------------
 
     public void consultarDarkWeb(int n, int[] examenDW) {
-        throw new UnsupportedOperationException("Sin implementar");
+        Handle[] copiados = new Handle[n];
+
+        for (int i = 0; i < n; i ++){
+            copiados[i] = _minHeap.desencolar();
+            copiados[i].actualizarRespuestas(_examenCanonico, examenDW);
+        }
+
+        for (int i = 0; i < n; i ++){
+            _minHeap.encolar(copiados[i]);
+        }
     }
  
 
 //-------------------------------------------------ENTREGAR-------------------------------------------------------------
 
     public void entregar(int estudiante) {
-        throw new UnsupportedOperationException("Sin implementar");
+        MinHeap.Handle miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
+
+        miEstudiante.entregar();
+
+        miEstudiante.subirHeap(miEstudiante.posicionHeap());
+
+        MinHeap.Handle entregado = miEstudiante.desencolarHeap();
+
+        _entregados[estudiante] = entregado;
     }
 
 //-----------------------------------------------------CORREGIR---------------------------------------------------------

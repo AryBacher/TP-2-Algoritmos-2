@@ -32,6 +32,10 @@ public class MinHeap {
                 throw new IllegalArgumentException("No puede compararse con null");
             }
 
+            else if (this._estudiante.entrego() != otro._estudiante.entrego()){
+                return this._estudiante.entrego() == true;
+            }
+
             else if (this._estudiante.puntaje() != otro._estudiante.puntaje()) {
                 return this._estudiante.puntaje() < otro._estudiante.puntaje();
             }
@@ -48,21 +52,18 @@ public class MinHeap {
         public int puntaje() {return _estudiante.puntaje();}
         public int[] respuestas() {return _estudiante.respuestas();}
 
-        public void actualizarRespuesta(int posicion, int respuesta){
-            _estudiante.cambiarRespuesta(posicion, respuesta);
+        public void actualizarRespuestaRapido(int ejercicio, int respuesta, int[] examenCanonico){
+            _estudiante.actualizarRespuestaRapido(ejercicio, respuesta, examenCanonico);
         }
 
-        public void actualizarPuntajeRapido(int[] examenCanonico, int ejercicio){
-            _estudiante.actualizarPuntajeRapido(examenCanonico, ejercicio);
+        public void actualizarRespuestas(int[] examenCanonico, int[] examen){
+            _estudiante.actualizarRespuestas(examenCanonico, examen);
         }
 
-        public void actualizarPuntaje(int[] examenCanonico){
-            _estudiante.actualizarPuntaje(examenCanonico);
-        }
-
-        public void actualizarHeap(int posicion){
-            MinHeap.this.actualizar(posicion);
-        }
+        public void actualizarHeap(int posicion) {MinHeap.this.actualizar(posicion);}
+        public void entregar() {_estudiante.entregar();}
+        public void subirHeap(int posicion) {MinHeap.this.subir(posicion);}
+        public Handle desencolarHeap() {return MinHeap.this.desencolar();}
     }
 
     private int padre(int posicion) {
@@ -149,16 +150,18 @@ public class MinHeap {
     }
 
     public Handle desencolar(){
-
         if (_tamaño > 0){
             Handle aDevolver = _estudiantes[0];
 
+            _estudiantes[0].actualizarPosicion(-1);
+
             if (_tamaño == 1){
-                _estudiantes[0] = null;    
+                _estudiantes[0] = null;
             }
 
             else {
                 _estudiantes[0] = _estudiantes[_tamaño - 1]; 
+                _estudiantes[0].actualizarPosicion(0);
                 _estudiantes[_tamaño - 1] = null;
 
                 _tamaño = _tamaño - 1;
@@ -176,6 +179,7 @@ public class MinHeap {
         // Encuentro el primer -1 que hay en mi lista y lo piso con mi elemento a encolar. 
         // Como para encolar requiero que se haya desencolado, entonces _puntajes[tamaño] nunca se va a ir de rango. 
         _estudiantes[_tamaño] = elemento;
+        _estudiantes[_tamaño].actualizarPosicion(_tamaño);
         _tamaño = _tamaño + 1;
 
         subir(_tamaño - 1);

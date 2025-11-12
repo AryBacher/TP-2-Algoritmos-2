@@ -25,13 +25,20 @@ public class Estudiante {
     public int[] respuestas() {return _respuestas;}
     public int id() {return _id;}
 
-    public void cambiarRespuesta(int posicion, int respuesta){
-        _respuestas[posicion] = respuesta;
+    public void actualizarRespuestaRapido(int ejercicio, int respuesta, int[] examenCanonico){
+        _respuestas[ejercicio] = respuesta;
+        
+        if(examenCanonico[ejercicio] == _respuestas[ejercicio]){
+            _cantRespuestasCorrectas ++;
+            _puntaje = (int) Math.floor(_cantRespuestasCorrectas * 100 / examenCanonico.length);
+        }
     }
 
-    public void actualizarPuntaje(int[] examenCanonico){
+    public void actualizarRespuestas(int[] examenCanonico, int[] examen){
         int cantRespuestasCorrectas = 0;
         for (int i = 0; i < examenCanonico.length; i ++){
+            _respuestas[i] = examen[i];
+
             if (_respuestas[i] == examenCanonico[i]){
                 cantRespuestasCorrectas ++;
             }
@@ -39,11 +46,6 @@ public class Estudiante {
         _cantRespuestasCorrectas = cantRespuestasCorrectas;
         _puntaje = (int) Math.floor(cantRespuestasCorrectas * 100 / examenCanonico.length);
     }
-    
-    public void actualizarPuntajeRapido(int[] examenCanonico, int ejercicio){
-        if(examenCanonico[ejercicio] == _respuestas[ejercicio]){
-            _cantRespuestasCorrectas ++;
-            _puntaje = (int) Math.floor(_cantRespuestasCorrectas * 100 / examenCanonico.length);
-        }
-    }
+
+    public void entregar(){_entrego = true;}
 }
