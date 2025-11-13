@@ -12,6 +12,13 @@ public class Edr {
     private Handle[] _entregados;
     private ArrayList<Integer> _noSospechososDeCopia;
 
+    // HAY UN TEST QUE ESTÁ MAL. FIJARSE EN LA LÍNEA 405 EL RESULTADO ESPERADO DEBERÍA
+    // SER 10.0, 30.0, 30.0, 20.0 PUES EL ESTUDIANTE QUE SE COPIÓ SE COPIÓ DE UNA 
+    // RESPUESTA QUE NO ERA LA CORRECTA. EL ESTUDIANTE 2 SE COPIÓ 
+    // EN LA POSICIÓN I = 5, LA RESPUESTA QUE SE COPIÓ DEL ESTUDIANTE 1 ES 1
+    // PERO LA RESPUESTA CORRECTA (SEGÚN EXAMEN CANONICO) ES 5. 
+    // ENTONCES NO DEBERÍA SUBIR LA NOTA
+    
     // PREGUNTAR SI ESTÁ BIEN ASUMIR QUE LAS RESPUESTAS DE LOS EJERCICIOS SON
     // NÚMEROS POSITIVOS. CUANDO INICIALIZAMOS, PONEMOS TODOS LOS VALORES EN -1
 
@@ -32,6 +39,9 @@ public class Edr {
     // EL HEAP?
 
     // PREGUNTAR SI HACE FALTA AGREGARLE EL TIPO T A LA LISTA ORDENADA Y AL HEAP
+
+    // PREGUNTAR SI HAY QUE HACER EL EQUALS DE NOTAFINAL, Y POR QUE FUNCIONA. 
+    // YO NO ENTIENDO PORQUE ANTES NO FUNCIONABA. ES POR LO DE LOS PUNTEROS?
 
 
 
@@ -140,7 +150,7 @@ public class Edr {
         // La posición es el id del estudiante
         
         int[] vecinos = new int[3];
-        int estPorFila = (int) Math.ceil(_ladoAula / 2);
+        int estPorFila = (int) Math.ceil(((double) _ladoAula) / 2);
 
         if (_cantEstudiantes == 1) {return null;}
 
