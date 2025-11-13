@@ -2,7 +2,7 @@ package aed;
 
 import aed.MinHeap.Handle;
 
-public class ListaOrdenada<T> {
+public class ListaOrdenada {
     private MinHeap.Handle[] valores;
 
     public ListaOrdenada(int tamaño){

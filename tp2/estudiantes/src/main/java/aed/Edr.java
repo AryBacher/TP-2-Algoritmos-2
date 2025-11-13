@@ -1,16 +1,16 @@
 package aed;
 import java.util.ArrayList;
-import java.util.logging.Handler;
 
 import aed.MinHeap.Handle;
 
 public class Edr {
-    private ListaOrdenada<MinHeap.Handle> _listaOrdenada;
+    private ListaOrdenada _listaOrdenada;
     private MinHeap _minHeap;
     private int _ladoAula;
     private int[] _examenCanonico;
     private int _cantEstudiantes;
     private Handle[] _entregados;
+    private ArrayList<Integer> _noSospechososDeCopia;
 
     // PREGUNTAR SI ESTÁ BIEN ASUMIR QUE LAS RESPUESTAS DE LOS EJERCICIOS SON
     // NÚMEROS POSITIVOS. CUANDO INICIALIZAMOS, PONEMOS TODOS LOS VALORES EN -1
@@ -18,7 +18,28 @@ public class Edr {
     // HACER DOS MÉTODOS PARA VECINOS, EN LOS QUE ME FIJO SI ESTOY EN PRIMERA FILA,
     // SOY EL ÚLTIMO. HACER ESTO PARA AHORRAR LÍNEAS DE CÓDIGO 
 
-    // AL FINAL HEAPIFY NO ERA HEAPIFY, LA OPERACIÓN DE HWAPIFY ES LA DE BAJAR
+    // AL FINAL HEAPIFY NO ERA HEAPIFY, LA OPERACIÓN DE HEAPIFY ES LA DE BAJAR
+
+    // PREGUNTAR SI LAS POSIBLES RESPUESTAS A UNA PREGUNTA DEL EXAMEN ESTÁ ACOTADA
+    // ENTRE 0 Y 9
+
+    // PREGUNTAR SI PODEMOS ASUMIR QUE DESPUÉS DE HACER CHEQUEAR COPIAS,
+    // LA ÚNICA OTRA FUNCIÓN QUE SE PUEDE CORRER ES "CORREGIR", PORQUE SINO
+    // TENEMOS UN MINHEAP VACÍO Y LAS OTRAS FUNCIONES PODRÍAN TIRAR ERROR.
+
+    // LO MISMO PARA DESPUÉS DE CORREGIR, QUE OTRAS FUNCIONES SE PUEDEN CORRER?
+    // ENTONCES DESPUÉS DE HACER CORREGIR Y CHEQUEAR COPIAS, TENDRÍAMOS QUE REARMAR 
+    // EL HEAP?
+
+    // PREGUNTAR SI HACE FALTA AGREGARLE EL TIPO T A LA LISTA ORDENADA Y AL HEAP
+
+
+
+    // COMPLETAR LAS COMPLEJIDADES (EN EL CÓDIGO)
+
+    // COMENTAR EL CÓDIGO
+
+    // HACER NUESTROS PROPIOS TESTS
 
     public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) {
         _ladoAula = LadoAula;
@@ -32,6 +53,7 @@ public class Edr {
 
         _cantEstudiantes = Cant_estudiantes;
         _entregados = new Handle[_cantEstudiantes];
+        _noSospechososDeCopia = new ArrayList<Integer>();
     }
 
     public Estudiante[] listaDeEstudiantes(int cantEstudiantes, int cantRespuestas){
@@ -237,7 +259,24 @@ public class Edr {
 //-----------------------------------------------------CORREGIR---------------------------------------------------------
 
     public NotaFinal[] corregir() {
-        throw new UnsupportedOperationException("Sin implementar");
+        NotaFinal[] notasFinales = new NotaFinal[_noSospechososDeCopia.size()];
+        Estudiante[] listaEstudiantes = new Estudiante[_noSospechososDeCopia.size()];
+        
+        for (int i = 0; i < _noSospechososDeCopia.size(); i ++){
+            listaEstudiantes[i] = _listaOrdenada.accederAPosicion(_noSospechososDeCopia.get(i)).estudiante();
+        }
+
+        _minHeap = new MinHeap(listaEstudiantes);
+        _minHeap.algoritmoDeFloyd();
+
+        for (int i = _noSospechososDeCopia.size() - 1; i >= 0; i --){
+            Handle est = _minHeap.desencolar();
+            NotaFinal nota = new NotaFinal(est.puntaje(), est.id());
+
+            notasFinales[i] = nota;
+        }
+
+        return notasFinales;
     }
 
 //-------------------------------------------------------CHEQUEAR COPIAS-------------------------------------------------
@@ -246,15 +285,17 @@ public class Edr {
         
         int[][] conteosPorPregunta = new int[_examenCanonico.length][10];
         
-        for (int pregunta = 0; pregunta < _examenCanonico.length; pregunta++) {
+        for (int pregunta = 0; pregunta < _examenCanonico.length; pregunta ++) {
             for (int est = 0; est < _cantEstudiantes; est++) {
                 int respuesta = _listaOrdenada.accederAPosicion(est).respuestas()[pregunta];
 
                 if (respuesta != -1 && respuesta >= 0 && respuesta < 10) {
-                    conteosPorPregunta[pregunta][respuesta]++;
+                    conteosPorPregunta[pregunta][respuesta] ++;
                 }
             }
         }
+
+        // Complejidades ArrayList: https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html
 
         ArrayList<Integer> sospechosos = new ArrayList<Integer>();
 
@@ -263,7 +304,7 @@ public class Edr {
             boolean esSospechoso = true;
             boolean tieneRespuestas = false;
             
-            for (int pregunta = 0; pregunta < respuestas.length; pregunta++) {
+            for (int pregunta = 0; pregunta < respuestas.length; pregunta ++) {
                 int respuesta = respuestas[pregunta];
                 
                 if (respuesta != -1) {
@@ -284,15 +325,17 @@ public class Edr {
             if (esSospechoso && tieneRespuestas) {
                 sospechosos.add(est);
             }
+
+            else{
+                _noSospechososDeCopia.add(est);
+            }
         }
 
-        int[] estudiantes_copiados = new int[sospechosos.size()];
+        int[] estudiantesCopiados = new int[sospechosos.size()];
         for (int i = 0; i < sospechosos.size(); i++) {
-            estudiantes_copiados[i] = sospechosos.get(i);
+            estudiantesCopiados[i] = sospechosos.get(i);
         }
 
-        return estudiantes_copiados;
-
-
+        return estudiantesCopiados;
     }
 }

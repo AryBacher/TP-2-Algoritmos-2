@@ -49,8 +49,9 @@ public class MinHeap {
 
         public Estudiante estudiante() {return _estudiante;}
         public int posicionHeap() {return _posicionHeap;}
-        public int puntaje() {return _estudiante.puntaje();}
+        public double puntaje() {return _estudiante.puntaje();}
         public int[] respuestas() {return _estudiante.respuestas();}
+        public int id() {return _estudiante.id();}
 
         public void actualizarRespuestaRapido(int ejercicio, int respuesta, int[] examenCanonico){
             _estudiante.actualizarRespuestaRapido(ejercicio, respuesta, examenCanonico);
@@ -101,8 +102,8 @@ public class MinHeap {
         // _estudiantes[padre] = nuevo_puntaje;
     }
 
-    public ListaOrdenada<Handle> heapToList(){
-        ListaOrdenada<Handle> res = new ListaOrdenada<Handle>(_estudiantes.length);
+    public ListaOrdenada heapToList(){
+        ListaOrdenada res = new ListaOrdenada(_estudiantes.length);
         
         for (int i = 0; i < _estudiantes.length; i++){
             res.cambiarValor(i, _estudiantes[i]);
@@ -113,7 +114,7 @@ public class MinHeap {
         return res;
     }
 
-    private void algoritmoDeFloyd(){
+    public void algoritmoDeFloyd(){
         int primerPadre = padre(_tamaño - 1);
 
         for (int i = primerPadre; i >= 0; i--) {
