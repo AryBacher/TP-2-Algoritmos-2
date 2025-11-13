@@ -243,6 +243,73 @@ public class Edr {
 //-------------------------------------------------------CHEQUEAR COPIAS-------------------------------------------------
 
     public int[] chequearCopias() {
-        throw new UnsupportedOperationException("Sin implementar");
+        ArrayList<ConteoRespuesta>[] conteosPorPregunta = new ArrayList[_examenCanonico.length];
+        for (int i = 0; i < _examenCanonico.length; i ++) {
+            conteosPorPregunta[i] = new ArrayList<ConteoRespuesta>();
+        }
+        for (int i = 0; i < _examenCanonico.length; i ++) {
+            for (int est = 0; est < _cantEstudiantes; est ++) {
+                int respuesta = _listaOrdenada.accederAPosicion(est).respuestas()[i];
+                if (respuesta != -1) {
+                    boolean encontrado = false;
+                    for (ConteoRespuesta cr : conteosPorPregunta[i]) {
+                        if (cr.respuesta == respuesta) {
+                            cr.cantidad = cr.cantidad + 1;
+                            encontrado = true;
+                            break;
+                        }
+                    }
+                    if (encontrado == false) {
+                        conteosPorPregunta[i].add(new ConteoRespuesta(respuesta, 1));
+                    }
+                }
+            }
+        }
+
+        ArrayList<Integer> sospechosos = new ArrayList<Integer>();
+        
+        for (int est = 0; est < _cantEstudiantes; est++) {
+            int[] respuestas = _listaOrdenada.accederAPosicion(est).respuestas();
+            boolean esSospechoso = true;
+            boolean tieneRespuestas = false;
+            
+            for (int pregunta = 0; pregunta < respuestas.length; pregunta++) {
+                int respuesta = respuestas[pregunta];
+                
+                // Me sirve para chequear solo respuestas completadas
+                if (respuesta != -1) {
+                    tieneRespuestas = true;
+                    
+                    int cantidadTotal = 0;
+                    for (ConteoRespuesta cr : conteosPorPregunta[pregunta]) {
+                        if (cr.respuesta == respuesta) {
+                            cantidadTotal = cr.cantidad;
+                            break;
+                        }
+                    }
+                    
+                    // No cuento al estudiante que analizo
+                    int cantidadOtros = cantidadTotal - 1;
+                    
+                    if (cantidadOtros < _cantEstudiantes / 4) {
+                        esSospechoso = false;
+                        break;
+                    }
+                }
+            }
+            
+            if (esSospechoso && tieneRespuestas) {
+                sospechosos.add(est);
+            }
+        }
+
+        int[] resultado = new int[sospechosos.size()];
+
+        for (int i = 0; i < sospechosos.size(); i++) {
+            resultado[i] = sospechosos.get(i);
+        }
+        
+        return resultado;
+
     }
 }
