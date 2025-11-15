@@ -1,23 +1,30 @@
 package aed;
 
-import aed.MinHeap.Handle;
+import java.util.ArrayList;
 
-public class ListaOrdenada {
-    private MinHeap.Handle[] valores;
+public class ListaOrdenada<T extends Comparable<T>> {
+    private ArrayList<MinHeap<T>.Handle> valores;
+    //private MinHeap<Estudiante>.Handle[] valores;
 
     public ListaOrdenada(int tamaño){
-        valores = new Handle[tamaño];
+        valores = new ArrayList<MinHeap<T>.Handle>(tamaño);
     }
 
-    public void cambiarValor(int posicion, Handle valor){
-        valores[posicion] = valor; 
+    public void cambiarValor(int posicion, MinHeap<T>.Handle valor){
+        if (posicion >= valores.size()) {
+            valores.add(valor);
+        }
+
+        else {
+            valores.set(posicion, valor);   
+        }
     }
 
-    public MinHeap.Handle accederAPosicion(int posicion){
-        return valores[posicion];
+    public MinHeap<T>.Handle accederAPosicion(int posicion){
+        return valores.get(posicion);
     }
 
     public int longitud(){
-        return valores.length;
+        return valores.size();
     }
 }

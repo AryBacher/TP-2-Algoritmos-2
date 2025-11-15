@@ -1,6 +1,6 @@
 package aed;
 
-public class Estudiante {
+public class Estudiante implements Comparable<Estudiante>{
 
     private int _id;
     private double _puntaje;
@@ -48,4 +48,33 @@ public class Estudiante {
     }
 
     public void entregar(){_entrego = true;}
+
+    @Override
+    public int compareTo(Estudiante otro) {
+        // Criterio de comparación para el Estudiante del MinHeap. 
+
+        // El primer criterio es si el estudiante entregó, el segundo la menor nota y el tercero el menor id
+
+        // Necesitamos que el primer criterio de comparación sea si entrego, pues en la operación entregar necesitamos 
+        // que el estudiante que entregue se mueva hacia la raíz para poder desencolarlo del heap.
+
+        if (otro == null) {
+            throw new IllegalArgumentException("No puede compararse con null");
+        }
+
+        else if (this._entrego != otro._entrego){
+            if (this._entrego == true) {return 1;}
+            return -1;
+        }
+
+        else if (this._puntaje != otro._puntaje) {
+            if (this._puntaje < otro._puntaje) {return 1;}
+            return -1;
+        }
+
+        else{
+            if (this._id < otro._id) {return 1;}
+            return -1;
+        }
+    }
 }

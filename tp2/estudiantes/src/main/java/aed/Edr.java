@@ -1,48 +1,18 @@
 package aed;
 import java.util.ArrayList;
 
-import aed.MinHeap.Handle;
-
 public class Edr {
-    private ListaOrdenada _listaOrdenada;
-    private MinHeap _minHeap;
+    private ListaOrdenada<Estudiante> _listaOrdenada;
+    private MinHeap<Estudiante> _minHeap;
     private int _ladoAula;
     private int[] _examenCanonico;
     private int _cantEstudiantes;
-    private Handle[] _entregados;
     private ArrayList<Integer> _noSospechososDeCopia;
-
-    // HAY UN TEST QUE ESTÁ MAL. FIJARSE EN LA LÍNEA 405 EL RESULTADO ESPERADO DEBERÍA
-    // SER 10.0, 30.0, 30.0, 20.0 PUES EL ESTUDIANTE QUE SE COPIÓ SE COPIÓ DE UNA 
-    // RESPUESTA QUE NO ERA LA CORRECTA. EL ESTUDIANTE 2 SE COPIÓ 
-    // EN LA POSICIÓN I = 5, LA RESPUESTA QUE SE COPIÓ DEL ESTUDIANTE 1 ES 1
-    // PERO LA RESPUESTA CORRECTA (SEGÚN EXAMEN CANONICO) ES 5. 
-    // ENTONCES NO DEBERÍA SUBIR LA NOTA
-    
-    // PREGUNTAR SI ESTÁ BIEN ASUMIR QUE LAS RESPUESTAS DE LOS EJERCICIOS SON
-    // NÚMEROS POSITIVOS. CUANDO INICIALIZAMOS, PONEMOS TODOS LOS VALORES EN -1
 
     // HACER DOS MÉTODOS PARA VECINOS, EN LOS QUE ME FIJO SI ESTOY EN PRIMERA FILA,
     // SOY EL ÚLTIMO. HACER ESTO PARA AHORRAR LÍNEAS DE CÓDIGO 
 
-    // AL FINAL HEAPIFY NO ERA HEAPIFY, LA OPERACIÓN DE HEAPIFY ES LA DE BAJAR
-
-    // PREGUNTAR SI LAS POSIBLES RESPUESTAS A UNA PREGUNTA DEL EXAMEN ESTÁ ACOTADA
-    // ENTRE 0 Y 9
-
-    // PREGUNTAR SI PODEMOS ASUMIR QUE DESPUÉS DE HACER CHEQUEAR COPIAS,
-    // LA ÚNICA OTRA FUNCIÓN QUE SE PUEDE CORRER ES "CORREGIR", PORQUE SINO
-    // TENEMOS UN MINHEAP VACÍO Y LAS OTRAS FUNCIONES PODRÍAN TIRAR ERROR.
-
-    // LO MISMO PARA DESPUÉS DE CORREGIR, QUE OTRAS FUNCIONES SE PUEDEN CORRER?
-    // ENTONCES DESPUÉS DE HACER CORREGIR Y CHEQUEAR COPIAS, TENDRÍAMOS QUE REARMAR 
-    // EL HEAP?
-
-    // PREGUNTAR SI HACE FALTA AGREGARLE EL TIPO T A LA LISTA ORDENADA Y AL HEAP
-
-    // PREGUNTAR SI HAY QUE HACER EL EQUALS DE NOTAFINAL, Y POR QUE FUNCIONA. 
-    // YO NO ENTIENDO PORQUE ANTES NO FUNCIONABA. ES POR LO DE LOS PUNTEROS?
-
+    
 
 
     // COMPLETAR LAS COMPLEJIDADES (EN EL CÓDIGO)
@@ -52,21 +22,24 @@ public class Edr {
     // HACER NUESTROS PROPIOS TESTS
 
     public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) {
+        //  Inicializamos todos nuestros atributos, creamos el heap y la lista ordenada.
         _ladoAula = LadoAula;
-        //_examenCanonico = new int[ExamenCanonico.length];
         _examenCanonico = ExamenCanonico;
 
         Estudiante[] listaEstudiantes = listaDeEstudiantes(Cant_estudiantes, ExamenCanonico.length);
 
-        _minHeap = new MinHeap(listaEstudiantes);
+        _minHeap = new MinHeap<Estudiante>(listaEstudiantes);
         _listaOrdenada = _minHeap.heapToList();
 
         _cantEstudiantes = Cant_estudiantes;
-        _entregados = new Handle[_cantEstudiantes];
-        _noSospechososDeCopia = new ArrayList<Integer>();
+        //_entregados = new ArrayList<MinHeap<Estudiante>.Handle>(_cantEstudiantes);
+        _noSospechososDeCopia = new ArrayList<Integer>(Cant_estudiantes);
     }
 
     public Estudiante[] listaDeEstudiantes(int cantEstudiantes, int cantRespuestas){
+        // Dada una cantidad de estudiantes (E) y una cantidad de respuestas (R), creamos E estudiantes,
+        // donde cada uno tiene un exámen sin completar de R posiciones y devolvemos ese array de estudiantes.
+
         Estudiante[] listaDeEstudiantes = new Estudiante[cantEstudiantes];
 
         for (int i = 0; i < cantEstudiantes; i ++){
@@ -79,10 +52,13 @@ public class Edr {
 //-------------------------------------------------NOTAS--------------------------------------------------------------------------
 
     public double[] notas(){
+        // Devolvemos la nota de todos los estudiantes ordenado por id. Para eso simplemente, accedemos a la nota (puntaje) de cada estudiante
+        // accediendo desde la lista ordenada
+
         double[] listaDeNotas = new double[_cantEstudiantes];
 
         for (int i = 0; i < _cantEstudiantes; i ++){
-            listaDeNotas[i] = _listaOrdenada.accederAPosicion(i).puntaje();
+            listaDeNotas[i] = _listaOrdenada.accederAPosicion(i).valor().puntaje();
         }
 
         return listaDeNotas;
@@ -93,12 +69,15 @@ public class Edr {
 
 
     public void copiarse(int estudiante) {
+        // Obtengo los vecinos de mi estudiante (los ids de los vecinos).
         int[] misVecinos = vecinos(estudiante);
 
         if (misVecinos != null){
             int maximo = 0;
             int idMaximo = -1;
 
+            // Recorro los 3 posibles vecinos que tengo y me fijo cual de ellos tiene la cantidad de respuestas máxima.
+            // Si hay 2 o más que tienen la misma cantidad de respuestas, desempato por id mayor, para eso me voy guardando el máximo de respuestas y el mayor id.
             for (int i = 0; i < 3; i ++){
                 if (misVecinos[i] != -1){
                     int cantRespuestas = cantRespuestasCompletadas(misVecinos[i], estudiante);
@@ -117,16 +96,19 @@ public class Edr {
             }
 
             if (maximo != 0){
+                // Obtengo las respuestas de ese estudiante.
                 int i = 0;
-                MinHeap.Handle miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
-                int[] misRespuestas = miEstudiante.respuestas();
-                int[] respuestasVecino = _listaOrdenada.accederAPosicion(idMaximo).respuestas();
-
+                MinHeap<Estudiante>.Handle miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
+                int[] misRespuestas = miEstudiante.valor().respuestas();
+                int[] respuestasVecino = _listaOrdenada.accederAPosicion(idMaximo).valor().respuestas();
+                
+                // Recorro hasta la primera posición que el estudiante del que me copio tiene una respuesta que yo no tengo
                 while (!(misRespuestas[i] == -1 && respuestasVecino[i] != -1)){
                     i++;
                 }
 
-                miEstudiante.actualizarRespuestaRapido(i, respuestasVecino[i], _examenCanonico);
+                // Me copio de esa respuesta
+                miEstudiante.valor().actualizarRespuestaRapido(i, respuestasVecino[i], _examenCanonico);
                 miEstudiante.actualizarHeap(miEstudiante.posicionHeap());
             }
         }
@@ -134,9 +116,12 @@ public class Edr {
 
     public int cantRespuestasCompletadas(int vecino, int estudiante){
         int cantRespuestasCompletadas = 0;
-        int[] misRespuestas = _listaOrdenada.accederAPosicion(estudiante).respuestas();
-        int[] respuestasVecino = _listaOrdenada.accederAPosicion(vecino).respuestas();
+        int[] misRespuestas = _listaOrdenada.accederAPosicion(estudiante).valor().respuestas();
+        int[] respuestasVecino = _listaOrdenada.accederAPosicion(vecino).valor().respuestas();
 
+        // Si en una posición hay un -1, significa que ese estudiante no tiene una respuesta completada,
+        // luego, cuando no hay un -1, sumamos 1 al contador.
+        
         for (int i = 0; i < misRespuestas.length; i ++){
             if (misRespuestas[i] == -1 && respuestasVecino[i] != -1){
                 cantRespuestasCompletadas = cantRespuestasCompletadas + 1;
@@ -147,7 +132,9 @@ public class Edr {
     }
 
     public int[] vecinos(int posicion){
-        // La posición es el id del estudiante
+        // La posición es el id del estudiante. Como convención, tenemos una lista de 3 posiciones (cantidad máxima de vecinos posibles).
+        // En la 1era posición guardamos el vecino de la izquierda, en la 2da el vecino de la derecha, y en la 3era el de adelante.
+        // Si no hay un vecino en alguna de esas posiciones, guardamos un -1. 
         
         int[] vecinos = new int[3];
         int estPorFila = (int) Math.ceil(((double) _ladoAula) / 2);
@@ -226,9 +213,12 @@ public class Edr {
 
 
     public void resolver(int estudiante, int NroEjercicio, int res) {
-        MinHeap.Handle miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
+        // Un estudiante resuelve un ejercicio en particular y se le actualiza su puntaje y su array de respuestas.
+        // Luego, actualizamos el heap para que se siga manteniendo el orden.
+
+        MinHeap<Estudiante>.Handle miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
         
-        miEstudiante.actualizarRespuestaRapido(NroEjercicio, res, _examenCanonico);
+        miEstudiante.valor().actualizarRespuestaRapido(NroEjercicio, res, _examenCanonico); 
         miEstudiante.actualizarHeap(miEstudiante.posicionHeap());
     } 
 
@@ -239,15 +229,19 @@ public class Edr {
 //------------------------------------------------CONSULTAR DARK WEB-------------------------------------------------------
 
     public void consultarDarkWeb(int n, int[] examenDW) {
-        Handle[] copiados = new Handle[n];
+        // n estudiantes se copian de la dark web. Para eso, primero necesitamos saber quienes son los n estudiantes
+        // con la peor nota. Por eso primero los desencolamos del heap, les actualizamos sus respuestas y sus notas (copiadas de la dark web),
+        // y una vez tenemos eso, recién ahí podemos encolar a esos estudiantes con sus nuevos puntajes, y que se pueda reordenar el heap.
+
+        ArrayList<MinHeap<Estudiante>.Handle> copiados = new ArrayList<MinHeap<Estudiante>.Handle>(n);
 
         for (int i = 0; i < n; i ++){
-            copiados[i] = _minHeap.desencolar();
-            copiados[i].actualizarRespuestas(_examenCanonico, examenDW);
+            copiados.add( _minHeap.desencolar());
+            copiados.get(i).valor().actualizarRespuestas(_examenCanonico, examenDW);
         }
 
         for (int i = 0; i < n; i ++){
-            _minHeap.encolar(copiados[i]);
+            _minHeap.encolar(copiados.get(i));
         }
     }
  
@@ -255,15 +249,17 @@ public class Edr {
 //-------------------------------------------------ENTREGAR-------------------------------------------------------------
 
     public void entregar(int estudiante) {
-        MinHeap.Handle miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
+        MinHeap<Estudiante>.Handle miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
 
-        miEstudiante.entregar();
+        miEstudiante.valor().entregar();
 
         miEstudiante.subirHeap(miEstudiante.posicionHeap());
 
-        MinHeap.Handle entregado = miEstudiante.desencolarHeap();
+        miEstudiante.desencolarHeap();
 
-        _entregados[estudiante] = entregado;
+        //MinHeap<Estudiante>.Handle entregado = miEstudiante.desencolarHeap();
+
+        //_entregados[estudiante] = entregado;
     }
 
 //-----------------------------------------------------CORREGIR---------------------------------------------------------
@@ -273,15 +269,15 @@ public class Edr {
         Estudiante[] listaEstudiantes = new Estudiante[_noSospechososDeCopia.size()];
         
         for (int i = 0; i < _noSospechososDeCopia.size(); i ++){
-            listaEstudiantes[i] = _listaOrdenada.accederAPosicion(_noSospechososDeCopia.get(i)).estudiante();
+            listaEstudiantes[i] = _listaOrdenada.accederAPosicion(_noSospechososDeCopia.get(i)).valor();
         }
 
-        _minHeap = new MinHeap(listaEstudiantes);
+        _minHeap = new MinHeap<Estudiante>(listaEstudiantes);
         _minHeap.algoritmoDeFloyd();
 
         for (int i = _noSospechososDeCopia.size() - 1; i >= 0; i --){
-            Handle est = _minHeap.desencolar();
-            NotaFinal nota = new NotaFinal(est.puntaje(), est.id());
+            MinHeap<Estudiante>.Handle est = _minHeap.desencolar();
+            NotaFinal nota = new NotaFinal(est.valor().puntaje(), est.valor().id());
 
             notasFinales[i] = nota;
         }
@@ -297,7 +293,7 @@ public class Edr {
         
         for (int pregunta = 0; pregunta < _examenCanonico.length; pregunta ++) {
             for (int est = 0; est < _cantEstudiantes; est++) {
-                int respuesta = _listaOrdenada.accederAPosicion(est).respuestas()[pregunta];
+                int respuesta = _listaOrdenada.accederAPosicion(est).valor().respuestas()[pregunta];
 
                 if (respuesta != -1 && respuesta >= 0 && respuesta < 10) {
                     conteosPorPregunta[pregunta][respuesta] ++;
@@ -307,10 +303,10 @@ public class Edr {
 
         // Complejidades ArrayList: https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html
 
-        ArrayList<Integer> sospechosos = new ArrayList<Integer>();
+        ArrayList<Integer> sospechosos = new ArrayList<Integer>(_cantEstudiantes);
 
         for (int est = 0; est < _cantEstudiantes; est++) {
-            int[] respuestas = _listaOrdenada.accederAPosicion(est).respuestas();
+            int[] respuestas = _listaOrdenada.accederAPosicion(est).valor().respuestas();
             boolean esSospechoso = true;
             boolean tieneRespuestas = false;
             
