@@ -26,6 +26,7 @@ public class Estudiante implements Comparable<Estudiante>{
     public int id() {return _id;}
 
     public void actualizarRespuestaRapido(int ejercicio, int respuesta, int[] examenCanonico){
+        // Actualizo solo una respuesta de un ejercicio y el puntaje del estudiante
         _respuestas[ejercicio] = respuesta;
         
         if(examenCanonico[ejercicio] == _respuestas[ejercicio]){
@@ -35,6 +36,7 @@ public class Estudiante implements Comparable<Estudiante>{
     }
 
     public void actualizarRespuestas(int[] examenCanonico, int[] examen){
+        // Actualizo todas las respuestas sobre el examen del estudiante y su puntaje.
         int cantRespuestasCorrectas = 0;
         for (int i = 0; i < examenCanonico.length; i ++){
             _respuestas[i] = examen[i];

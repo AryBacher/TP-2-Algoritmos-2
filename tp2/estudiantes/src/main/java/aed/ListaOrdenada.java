@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class ListaOrdenada<T extends Comparable<T>> {
     private ArrayList<MinHeap<T>.Handle> valores;
-    //private MinHeap<Estudiante>.Handle[] valores;
 
     public ListaOrdenada(int tamaño){
         valores = new ArrayList<MinHeap<T>.Handle>(tamaño);

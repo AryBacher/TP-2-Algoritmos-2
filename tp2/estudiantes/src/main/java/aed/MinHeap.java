@@ -32,25 +32,9 @@ public class MinHeap<T extends Comparable<T>> {
         }
 
         public T valor() {return _estudiante;}
-
-        // public T estudiante() {return _estudiante;}
         public int posicionHeap() {return _posicionHeap;}
-        // public double puntaje() {return _estudiante.puntaje();}
-        // public int[] respuestas() {return _estudiante.respuestas();}
-        // public int id() {return _estudiante.id();}
-
-        // public void actualizarRespuestaRapido(int ejercicio, int respuesta, int[] examenCanonico){
-        //     // Actualiza solo una respuesta de un estudiante y su puntaje
-        //     _estudiante.actualizarRespuestaRapido(ejercicio, respuesta, examenCanonico);
-        // }
-
-        // public void actualizarRespuestas(int[] examenCanonico, int[] examen){
-        //     // Actualiza todas las respuestas de un examen de un estudiante y su puntaje
-        //     _estudiante.actualizarRespuestas(examenCanonico, examen);
-        // }
 
         public void actualizarHeap(int posicion) {MinHeap.this.actualizar(posicion);}
-        // public void entregar() {_estudiante.entregar();}
         public void subirHeap(int posicion) {MinHeap.this.subir(posicion);}
         public Handle desencolarHeap() {return MinHeap.this.desencolar();}
     }

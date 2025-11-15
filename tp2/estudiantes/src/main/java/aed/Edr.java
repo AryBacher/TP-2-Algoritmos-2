@@ -17,8 +17,6 @@ public class Edr {
 
     // COMPLETAR LAS COMPLEJIDADES (EN EL CÓDIGO)
 
-    // COMENTAR EL CÓDIGO
-
     // HACER NUESTROS PROPIOS TESTS
 
     public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) {
@@ -249,6 +247,13 @@ public class Edr {
 //-------------------------------------------------ENTREGAR-------------------------------------------------------------
 
     public void entregar(int estudiante) {
+        // Dado un estudiante, este entrega su examen.
+
+        // Luego de que entrega su examen, cambia su valor de entregado a verdadero, luego,
+        // cuando quiero actualizar el heap, este estudiante está garantizado a terminar arriba de todo
+        // pues sería justamente el único que ya entregó y sigue en el heap. Por lo tanto
+        // puedo desencolarlo del heap (y voy a desencolar a ese estudiante) y el heap se reordena.
+
         MinHeap<Estudiante>.Handle miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
 
         miEstudiante.valor().entregar();
@@ -256,10 +261,6 @@ public class Edr {
         miEstudiante.subirHeap(miEstudiante.posicionHeap());
 
         miEstudiante.desencolarHeap();
-
-        //MinHeap<Estudiante>.Handle entregado = miEstudiante.desencolarHeap();
-
-        //_entregados[estudiante] = entregado;
     }
 
 //-----------------------------------------------------CORREGIR---------------------------------------------------------
@@ -271,10 +272,14 @@ public class Edr {
         for (int i = 0; i < _noSospechososDeCopia.size(); i ++){
             listaEstudiantes[i] = _listaOrdenada.accederAPosicion(_noSospechososDeCopia.get(i)).valor();
         }
-
+        
+        // Como el heap está vació, tenemos que armarlo con todos los estudiantes que no se hayan copiado
+        // Esto lo hacemos con el algoritmo de Floyd.
         _minHeap = new MinHeap<Estudiante>(listaEstudiantes);
         _minHeap.algoritmoDeFloyd();
 
+        // Luego, por cada estudiante, lo desencolo del heap y ya queda ordenado 
+        // de manera descendente en notasFinales. Para cada estudiante, le creamos su notaFinal.
         for (int i = _noSospechososDeCopia.size() - 1; i >= 0; i --){
             MinHeap<Estudiante>.Handle est = _minHeap.desencolar();
             NotaFinal nota = new NotaFinal(est.valor().puntaje(), est.valor().id());
@@ -288,9 +293,13 @@ public class Edr {
 //-------------------------------------------------------CHEQUEAR COPIAS-------------------------------------------------
 
     public int[] chequearCopias() {
-        
         int[][] conteosPorPregunta = new int[_examenCanonico.length][10];
         
+        // Tengo una matriz para contar cuantas respuestas hay por cada pregunta.
+        // Por ejemplo, para la primera pregunta, si hay 7 estudiantes que respondieron "4", 
+        // y 3 que respondieron "2", en la primera lista del array, va a haber ceros en todas las 
+        // posiciones, menos en la posición 4, que habrá un 7, y en la posición 2, habrá un 3.
+
         for (int pregunta = 0; pregunta < _examenCanonico.length; pregunta ++) {
             for (int est = 0; est < _cantEstudiantes; est++) {
                 int respuesta = _listaOrdenada.accederAPosicion(est).valor().respuestas()[pregunta];
@@ -305,6 +314,7 @@ public class Edr {
 
         ArrayList<Integer> sospechosos = new ArrayList<Integer>(_cantEstudiantes);
 
+        // Vamos viendo por cada estudiante si es sospechoso respetando los criterios propuestos.
         for (int est = 0; est < _cantEstudiantes; est++) {
             int[] respuestas = _listaOrdenada.accederAPosicion(est).valor().respuestas();
             boolean esSospechoso = true;
@@ -321,6 +331,9 @@ public class Edr {
                     // No cuento al estudiante que analizo
                     int cantidadOtros = cantidadTotal - 1;
                     
+                    // Si hay solo un ejercicio en el que las respuestas de 
+                    // un estudiante no es igual a más del 25%, no es sospechoso de copia
+                     
                     if (cantidadOtros < _cantEstudiantes / 4) {
                         esSospechoso = false;
                         break;
@@ -337,6 +350,7 @@ public class Edr {
             }
         }
 
+        // Vemos quienes son los estudiantes que se copiaron y los devolvemos.
         int[] estudiantesCopiados = new int[sospechosos.size()];
         for (int i = 0; i < sospechosos.size(); i++) {
             estudiantesCopiados[i] = sospechosos.get(i);
