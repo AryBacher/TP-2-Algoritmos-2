@@ -7,6 +7,8 @@ public class NotaFinal implements Comparable<NotaFinal> {
     public NotaFinal(double nota, int id){
         _nota = nota;
         _id = id;
+
+        // Complejidad Total: O(1)
     }
 
     public int compareTo(NotaFinal otra){
@@ -14,6 +16,8 @@ public class NotaFinal implements Comparable<NotaFinal> {
             return this._id - otra._id;
         }
         return Double.compare(this._nota, otra._nota);
+
+        // Complejidad Total: O(1)
     }
 
     @Override
@@ -28,5 +32,7 @@ public class NotaFinal implements Comparable<NotaFinal> {
         if (this._id == otraNota._id && this._nota == otraNota._nota) {return true;}
 
         return false;
+
+        // Complejidad Total: O(1)
     }
 }

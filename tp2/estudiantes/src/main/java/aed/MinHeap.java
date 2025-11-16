@@ -8,14 +8,16 @@ public class MinHeap<T extends Comparable<T>> {
 
     public MinHeap(T[] estudiantes) {
         // Creamos una lista de handles y en cada posicion le asignamos toda la información de un estudiante
-        ArrayList<Handle> listaEstudiantes = new ArrayList<Handle>(estudiantes.length);
+        ArrayList<Handle> listaEstudiantes = new ArrayList<Handle>(estudiantes.length); // -- O(E)
 
-        for (int i = 0; i < estudiantes.length; i ++){
-            listaEstudiantes.add(new Handle(estudiantes[i], i));
+        for (int i = 0; i < estudiantes.length; i ++){ // -- E * O(1) = O(E)
+            listaEstudiantes.add(new Handle(estudiantes[i], i)); 
+            // -- O(1) (real, no amortizado pues listaEstudiantes ya tiene espacio dispnible)
         }
 
         _estudiantes = listaEstudiantes;
         _tamaño = _estudiantes.size();
+        // Complejidad Total: O(E) + O(E) = O(E)
     }
 
     public class Handle {
@@ -25,33 +27,40 @@ public class MinHeap<T extends Comparable<T>> {
         public Handle(T est, int posicion){
             _estudiante = est;
             _posicionHeap = posicion;
+            // Complejidad Total: O(1)
         }
 
         public void actualizarPosicion(int posicion){
-            _posicionHeap = posicion;
+            _posicionHeap = posicion; // Complejidad Total: O(1)
         }
 
-        public T valor() {return _estudiante;}
-        public int posicionHeap() {return _posicionHeap;}
+        public T valor() {return _estudiante;} // Complejidad Total: O(1)
+        public int posicionHeap() {return _posicionHeap;} // Complejidad Total: O(1)
 
-        public void actualizarHeap(int posicion) {MinHeap.this.actualizar(posicion);}
-        public void subirHeap(int posicion) {MinHeap.this.subir(posicion);}
-        public Handle desencolarHeap() {return MinHeap.this.desencolar();}
+        public void actualizarHeap(int posicion) {MinHeap.this.actualizar(posicion);} // Complejidad Total: O(log E)
+        public void subirHeap(int posicion) {MinHeap.this.subir(posicion);} // Complejidad Total: O(log E)
+        public Handle desencolarHeap() {return MinHeap.this.desencolar();} // Complejidad Total: O(log E)
     }
 
     private int padre(int posicion) {
         // Devolvemos el padre de una posición en el heap.
-        return (posicion - 1) / 2;
+        return (posicion - 1) / 2; 
+
+        // Complejidad Total: O(1)
     }
 
     private int hijo_izq(int posicion) {
         // Devolvemos el hijo izquierdo de una posición en el heap.
         return 2 * posicion + 1;
+
+        // Complejidad Total: O(1)
     }
 
     private int hijo_der(int posicion) {
         // Devolvemos el hijo derecho de una posición en el heap.
         return 2 * posicion + 2;
+
+        // Complejidad Total: O(1)
     }
 
     private void intercambiar(int padre, int hijo){
@@ -64,6 +73,8 @@ public class MinHeap<T extends Comparable<T>> {
 
         _estudiantes.get(hijo).actualizarPosicion(hijo);
         _estudiantes.get(padre).actualizarPosicion(padre);
+
+        // Complejidad Total: O(1)
     }
 
     public ListaOrdenada<T> heapToList(){
@@ -75,15 +86,17 @@ public class MinHeap<T extends Comparable<T>> {
 
         // Una vez que tenemos el heap y la lista ordenada por id, ahora sí corremos el algoritmo de Floyd sobre el heap para que quede ordenado correctamente.
 
-        ListaOrdenada<T> res = new ListaOrdenada<T>(_estudiantes.size());
+        ListaOrdenada<T> res = new ListaOrdenada<T>(_estudiantes.size()); // -- O(E)
         
-        for (int i = 0; i < _estudiantes.size(); i++){
+        for (int i = 0; i < _estudiantes.size(); i++){ // -- E * O(1) = O(E)
             res.cambiarValor(i, _estudiantes.get(i));
         }
 
-        algoritmoDeFloyd();
+        algoritmoDeFloyd(); // -- O(E)
         
         return res;
+
+        // Complejidad Total: O(E) + O(E) + O(E) = O(E)
     }
 
     public void algoritmoDeFloyd(){
@@ -97,6 +110,8 @@ public class MinHeap<T extends Comparable<T>> {
         for (int i = primerPadre; i >= 0; i--) {
             bajar(i);
         }
+
+        // Complejidad Total: O(E) por definición del algoritmoDeFloyd
     }
 
     private void bajar(int padre){
@@ -132,6 +147,8 @@ public class MinHeap<T extends Comparable<T>> {
                 }
             }
         }
+
+        // O(log E) por definición de la operación bajar
     }
 
     public Handle desencolar(){
@@ -163,13 +180,15 @@ public class MinHeap<T extends Comparable<T>> {
 
                 _tamaño = _tamaño - 1;
 
-                bajar(0);
+                bajar(0); // -- O(log E)
             }
 
             return aDevolver;
         }
 
         return null;
+
+        // Complejidad Total: O(log E)
     }
 
     public void encolar(Handle elemento){
@@ -180,16 +199,20 @@ public class MinHeap<T extends Comparable<T>> {
         _estudiantes.get(_tamaño).actualizarPosicion(_tamaño);
         _tamaño = _tamaño + 1;
 
-        subir(_tamaño - 1);
+        subir(_tamaño - 1); // -- O(log E)
+
+        // Complejidad Total: O(log E)
     }
 
     private void subir(int posicion){
         // Dado un estudiante (una posición en el heap), lo subo en el árbol hasta que su padre sea menor que él o que se convierta en la raíz del árbol.
-        while (posicion != 0 && _estudiantes.get(padre(posicion)).valor().compareTo(_estudiantes.get(posicion).valor()) == -1){
+        while (posicion != 0 && _estudiantes.get(padre(posicion)).valor().compareTo(_estudiantes.get(posicion).valor()) == -1){ // log E * O(1) = O(log E)
             intercambiar(padre(posicion), posicion);
 
             posicion = padre(posicion);
         }
+
+        // Complejidad Total: O(log E)
     }
 
     public void actualizar(int posicion){
@@ -198,7 +221,9 @@ public class MinHeap<T extends Comparable<T>> {
         // Cuando quiero actualizar la posición, en nuestro caso en partícular, el puntaje de un estudiante nunca puede bajar, solo subir,
         // y lo mismo para entregar, no puedo pasar de haber entregado a no haberlo hecho. Luego, simplemente puedo bajar a esa persona que actualizo.
         
-        bajar(posicion);
+        bajar(posicion); // -- O(log E)
+
+        // Complejidad Total: O(log E)
     }
 }
 

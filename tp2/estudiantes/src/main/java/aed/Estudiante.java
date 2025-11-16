@@ -12,18 +12,20 @@ public class Estudiante implements Comparable<Estudiante>{
         _puntaje = 0;
         _entrego = false;
         _id = id;
-        _respuestas = new int[cantRespuestas];
+        _respuestas = new int[cantRespuestas]; // -- O(R)
         _cantRespuestasCorrectas = 0;
 
-        for (int i = 0; i < cantRespuestas; i ++){
+        for (int i = 0; i < cantRespuestas; i ++){ // R * O(1) = O(R)
             _respuestas[i] = -1;
         }
+
+        // Complejidad Total: O(R) + O(R) = O(R) 
     }
 
-    public double puntaje() {return _puntaje;}
-    public boolean entrego() {return _entrego;}
-    public int[] respuestas() {return _respuestas;}
-    public int id() {return _id;}
+    public double puntaje() {return _puntaje;} // Complejidad Total: O(1)
+    public boolean entrego() {return _entrego;} // Complejidad Total: O(1)
+    public int[] respuestas() {return _respuestas;} // Complejidad Total: O(1)
+    public int id() {return _id;} // Complejidad Total: O(1)
 
     public void actualizarRespuestaRapido(int ejercicio, int respuesta, int[] examenCanonico){
         // Actualizo solo una respuesta de un ejercicio y el puntaje del estudiante
@@ -33,12 +35,14 @@ public class Estudiante implements Comparable<Estudiante>{
             _cantRespuestasCorrectas ++;
             _puntaje = Math.floor(_cantRespuestasCorrectas * 100 / examenCanonico.length);
         }
+
+        // Complejidad Total: O(1)
     }
 
     public void actualizarRespuestas(int[] examenCanonico, int[] examen){
         // Actualizo todas las respuestas sobre el examen del estudiante y su puntaje.
         int cantRespuestasCorrectas = 0;
-        for (int i = 0; i < examenCanonico.length; i ++){
+        for (int i = 0; i < examenCanonico.length; i ++){ // R * O(1) = O(R)
             _respuestas[i] = examen[i];
 
             if (_respuestas[i] == examenCanonico[i]){
@@ -47,9 +51,11 @@ public class Estudiante implements Comparable<Estudiante>{
         }
         _cantRespuestasCorrectas = cantRespuestasCorrectas;
         _puntaje = Math.floor(cantRespuestasCorrectas * 100 / examenCanonico.length);
+
+        // Complejidad Total: O(R)
     }
 
-    public void entregar(){_entrego = true;}
+    public void entregar(){_entrego = true;} // Complejidad Total: O(1)
 
     @Override
     public int compareTo(Estudiante otro) {
@@ -78,5 +84,7 @@ public class Estudiante implements Comparable<Estudiante>{
             if (this._id < otro._id) {return 1;}
             return -1;
         }
+
+        // Complejidad Total: O(1)
     }
 }
