@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class MinHeap<T extends Comparable<T>> {
 
-    private ArrayList<Handle<T>> _estudiantes;
+    private ArrayList<aed.Handle<T>> _estudiantes;
     private int _tamaño;
 
     
@@ -15,7 +15,7 @@ public class MinHeap<T extends Comparable<T>> {
     // ESTO ES LO QUE CORREGIMOS DEL HEAP// 
 
     // Nos creamos el handle dentro de nuestro MinHeap generico, que nos va a permitir interactuar con el handle
-    public class HandleHeap implements Handle<T> {
+    public class HandleHeap implements aed.Handle<T> {
     
         private int posicion;
         private T valor;
@@ -36,6 +36,7 @@ public class MinHeap<T extends Comparable<T>> {
     public void actualizarPosicion(int nuevaPos) {
         this.posicion = nuevaPos;
     }
+    
     public void actualizarValor (T nuevoValor){
         this.valor = nuevoValor; 
     }
@@ -44,7 +45,7 @@ public class MinHeap<T extends Comparable<T>> {
 
     public MinHeap(T[] estudiantes) {
         // Creamos una lista de handles y en cada posicion le asignamos toda la información de un estudiante
-        ArrayList<Handle<T>> listaEstudiantes = new ArrayList<Handle<T>>(estudiantes.length); // -- O(E)
+        ArrayList<aed.Handle<T>> listaEstudiantes = new ArrayList<aed.Handle<T>>(estudiantes.length); // -- O(E)
 
         for (int i = 0; i < estudiantes.length; i ++){ // -- E * O(1) = O(E)
             listaEstudiantes.add(new HandleHeap(estudiantes[i], i));
@@ -80,7 +81,7 @@ public class MinHeap<T extends Comparable<T>> {
     private void intercambiar(int padre, int hijo){
         // Dadas dos posiciones del heap, intercambiamos los Handles y actualizamos las posiciones
 
-        Handle<T> nuevo_puntaje = _estudiantes.get(hijo);
+        aed.Handle<T> nuevo_puntaje = _estudiantes.get(hijo);
 
         _estudiantes.set(hijo, _estudiantes.get(padre));
         _estudiantes.set(padre, nuevo_puntaje);
@@ -103,7 +104,7 @@ public class MinHeap<T extends Comparable<T>> {
         ListaOrdenada<T> res = new ListaOrdenada<T>(_estudiantes.size()); // -- O(E)
 
         for (int i = 0; i < _estudiantes.size(); i++){ // -- E * O(1) = O(E)
-            res.cambiarValor(i, _estudiantes.get(i));
+            res.cambiarValor(i,  (MinHeap<T>.HandleHeap) _estudiantes.get(i));
         }
 
         algoritmoDeFloyd(); // -- O(E)
@@ -167,7 +168,7 @@ public class MinHeap<T extends Comparable<T>> {
         // O(log E) por definición de la operación bajar
     }
 
-    public Handle<T> desencolar(){
+    public aed.Handle<T> desencolar(){
         // Desencolo del Handle. Lo que hacemos es "sacar" el estudiante en la primera posición del heap, es decir, quién está en la raíz.
         // Pero en realidad no es que lo sacamos del array del heap, pues si quisiera tener un heap sin ese estudiante, debería de crear
         // un nuevo array con los estudiantes que de verdad se encuentran en l heap, pero eso superaría la complejidad permitida.
@@ -180,7 +181,7 @@ public class MinHeap<T extends Comparable<T>> {
         // hasta que se cumpla el invariante de representación del heap, es decir, hasta que mi array sea justamente un heap. Finalmente, devuelvo al estudiante desencolado.
 
         if (_tamaño > 0){
-            Handle<T> aDevolver = _estudiantes.get(0);
+            aed.Handle<T> aDevolver = _estudiantes.get(0);
 
             _estudiantes.get(0).actualizarPosicion(-1);
 
@@ -206,7 +207,7 @@ public class MinHeap<T extends Comparable<T>> {
         // Complejidad Total: O(log E)
     }
 
-    public void encolar(Handle<T> elemento){
+    public void encolar(aed.Handle<T> elemento){
         // Encuentro el primer null que hay en mi lista y lo piso con mi elemento a encolar. 
         // Como para encolar requiero que se haya desencolado, entonces _puntajes[tamaño] nunca se va a ir de rango y va a ser exactamente mi primer null del heap. 
 

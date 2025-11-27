@@ -15,7 +15,7 @@ class EdrTests {
 
     @BeforeEach
     void setUp(){
-        d_aula = 5;
+        d_aula = 7;
         cant_alumnos = 4;
         solucion = new int[]{0,1,2,3,4,5,6,7,8,9};
 

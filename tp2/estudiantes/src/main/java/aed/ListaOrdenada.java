@@ -2,16 +2,18 @@ package aed;
 
 import java.util.ArrayList;
 
+//import aed.MinHeap.HandleHeap;
+
 public class ListaOrdenada<T extends Comparable<T>> {
 
-    private ArrayList<Handle<T>> valores;
+    private ArrayList<MinHeap<T>.HandleHeap> valores;
     
     
     public ListaOrdenada(int tamaño){
-        valores = new ArrayList<Handle<T>>(tamaño); // -- O(tamaño)
+        valores = new ArrayList<MinHeap<T>.HandleHeap>(tamaño); // -- O(tamaño)
     }
 
-    public void cambiarValor(int posicion, Handle<T> valor){
+    public void cambiarValor(int posicion, MinHeap<T>.HandleHeap valor){
         if (posicion >= valores.size()) {
             valores.add(valor); // -- O(1) pues, en nuestro caso, siempre hay una posición disponible
         }
@@ -23,7 +25,7 @@ public class ListaOrdenada<T extends Comparable<T>> {
 
     }
 
-    public Handle<T> accederAPosicion(int posicion){
+    public MinHeap<T>.HandleHeap accederAPosicion(int posicion){
         return valores.get(posicion); // -- O(1)
     }
 
