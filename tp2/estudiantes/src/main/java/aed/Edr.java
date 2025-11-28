@@ -265,7 +265,8 @@ public class Edr {
 
         miEstudiante.valor().entregar();
 
-        miEstudiante.eliminarValor(estudiante);
+        _minHeap.eliminar(estudiante);
+        // miEstudiante.eliminarValor(estudiante);
 
         // _minHeap.subir(miEstudiante.posicionHeap()); // -- O(log E)
 
