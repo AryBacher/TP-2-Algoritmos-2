@@ -139,9 +139,24 @@ public class Edr {
 
         if (_cantEstudiantes == 1) {return null;}
 
+        // Caso particular. (Aula 2x2)
+        if (estPorFila == 1){
+            vecinos[0] = -1;
+            vecinos[1] = -1;
+
+            if (posicion == 2){
+                vecinos[2] = 0;
+            }
+            
+            else{
+                vecinos[2] = -1;
+            }
+
+        }
+
         // Me fijo si estoy en una punta
         // Punta izquierda
-        if (posicion % estPorFila == 0){
+        else if (posicion % estPorFila == 0){
             vecinos[0] = -1;
             // Me fijo que no soy el último estudiante y agrego el de mi derecha
             if (posicion != _cantEstudiantes - 1){

@@ -219,7 +219,7 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
     public void actualizar(int posicion){
-        // Dado un estudiante, quiero actualizar su posición en el heap porque se ćambió su puntaje o su estado de entrega.
+        // Dado un estudiante, quiero actualizar su posición en el heap porque se cambió su puntaje o su estado de entrega.
 
         // Cuando quiero actualizar la posición, en nuestro caso en partícular, el puntaje de un estudiante nunca puede bajar, solo subir,
         // y lo mismo para entregar, no puedo pasar de haber entregado a no haberlo hecho. Luego, simplemente puedo bajar a esa persona que actualizo.
