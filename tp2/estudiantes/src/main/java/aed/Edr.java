@@ -25,7 +25,7 @@ public class Edr {
         // Complejidad Total: O(E * R) + 3 * O(E) = O(E * R)
     }
 
-    public Estudiante[] listaDeEstudiantes(int cantEstudiantes, int cantRespuestas){
+    private Estudiante[] listaDeEstudiantes(int cantEstudiantes, int cantRespuestas){
         // Dada una cantidad de estudiantes (E) y una cantidad de respuestas (R), creamos E estudiantes,
         // donde cada uno tiene un exámen sin completar de R posiciones y devolvemos ese array de estudiantes.
 
@@ -91,7 +91,7 @@ public class Edr {
             if (maximo != 0){
                 // Obtengo las respuestas de ese estudiante.
                 int i = 0;
-                MinHeap<Estudiante>.HandleHeap miEstudiante = _listaOrdenada.accederAPosicion(estudiante); // -- O(1)
+                MinHeap<Estudiante>.HandleHeap<Estudiante> miEstudiante = _listaOrdenada.accederAPosicion(estudiante); // -- O(1)
                 int[] misRespuestas = miEstudiante.valor().respuestas(); // -- O(1)
                 int[] respuestasVecino = _listaOrdenada.accederAPosicion(idMaximo).valor().respuestas(); // -- O(1)
                 
@@ -215,7 +215,7 @@ public class Edr {
         // Un estudiante resuelve un ejercicio en particular y se le actualiza su puntaje y su array de respuestas.
         // Luego, actualizamos el heap para que se siga manteniendo el orden.
 
-        MinHeap<Estudiante>.HandleHeap miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
+        MinHeap<Estudiante>.HandleHeap<Estudiante> miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
         
         miEstudiante.valor().actualizarRespuestaRapido(NroEjercicio, res, _examenCanonico); // -- O(1)
         _minHeap.actualizar(miEstudiante.posicionHeap()); // -- O(log E)
@@ -234,7 +234,7 @@ public class Edr {
         // con la peor nota. Por eso primero los desencolamos del heap, les actualizamos sus respuestas y sus notas (copiadas de la dark web),
         // y una vez tenemos eso, recién ahí podemos encolar a esos estudiantes con sus nuevos puntajes, y que se pueda reordenar el heap.
 
-        ArrayList<MinHeap<Estudiante>.HandleHeap> copiados = new ArrayList<MinHeap<Estudiante>.HandleHeap>(n); // -- O(k), con k = n
+        ArrayList<MinHeap<Estudiante>.HandleHeap<Estudiante>> copiados = new ArrayList<MinHeap<Estudiante>.HandleHeap<Estudiante>>(n); // -- O(k), con k = n
 
         for (int i = 0; i < n; i ++){ // k * (O(log E) + O(R)) = O(k * (R + log(E)))
             copiados.add( _minHeap.desencolar()); // -- O(log E)
@@ -259,13 +259,15 @@ public class Edr {
         // pues sería justamente el único que ya entregó y sigue en el heap. Por lo tanto
         // puedo desencolarlo del heap (y voy a desencolar a ese estudiante) y el heap se reordena.
 
-        MinHeap<Estudiante>.HandleHeap miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
+        MinHeap<Estudiante>.HandleHeap<Estudiante> miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
 
         miEstudiante.valor().entregar();
 
-        _minHeap.subir(miEstudiante.posicionHeap()); // -- O(log E)
+        miEstudiante.eliminarValor(estudiante);
 
-        _minHeap.desencolar(); // -- O(log E)
+        // _minHeap.subir(miEstudiante.posicionHeap()); // -- O(log E)
+
+        // _minHeap.desencolar(); // -- O(log E)
 
         // Complejidad Total: O(log E) + O(log E) = O(log E)
     }
@@ -288,7 +290,7 @@ public class Edr {
         // Luego, por cada estudiante, lo desencolo del heap y ya queda ordenado 
         // de manera descendente en notasFinales. Para cada estudiante, le creamos su notaFinal.
         for (int i = _noSospechososDeCopia.size() - 1; i >= 0; i --){ // E * O(log E) = O(E * log E)
-            MinHeap<Estudiante>.HandleHeap est = _minHeap.desencolar(); // -- O(log E)
+            MinHeap<Estudiante>.HandleHeap<Estudiante> est = _minHeap.desencolar(); // -- O(log E)
             NotaFinal nota = new NotaFinal(est.valor().puntaje(), est.valor().id()); // -- O(1)
 
             notasFinales[i] = nota;

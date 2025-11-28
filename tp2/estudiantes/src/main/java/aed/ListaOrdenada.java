@@ -3,13 +3,13 @@ package aed;
 import java.util.ArrayList;
 
 public class ListaOrdenada<T extends Comparable<T>> {
-    private ArrayList<MinHeap<T>.HandleHeap> valores;
+    private ArrayList<MinHeap<T>.HandleHeap<T>> valores;
 
     public ListaOrdenada(int tamaño){
-        valores = new ArrayList<MinHeap<T>.HandleHeap>(tamaño); // -- O(tamaño)
+        valores = new ArrayList<MinHeap<T>.HandleHeap<T>>(tamaño); // -- O(tamaño)
     }
 
-    public void cambiarValor(int posicion, MinHeap<T>.HandleHeap valor){
+    public void cambiarValor(int posicion, MinHeap<T>.HandleHeap<T> valor){
         if (posicion >= valores.size()) {
             valores.add(valor); // -- O(1) pues, en nuestro caso, siempre hay una posición disponible
         }
@@ -21,7 +21,7 @@ public class ListaOrdenada<T extends Comparable<T>> {
         // Complejidad Total: O(1)
     }
 
-    public MinHeap<T>.HandleHeap accederAPosicion(int posicion){
+    public MinHeap<T>.HandleHeap<T> accederAPosicion(int posicion){
         return valores.get(posicion); // -- O(1)
     }
 
