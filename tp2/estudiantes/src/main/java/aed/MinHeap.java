@@ -3,15 +3,15 @@ package aed;
 import java.util.ArrayList;
 
 public class MinHeap<T extends Comparable<T>> {
-    private ArrayList<Handle> _estudiantes;
+    private ArrayList<HandleHeap> _estudiantes;
     private int _tamaño;
 
     public MinHeap(T[] estudiantes) {
         // Creamos una lista de handles y en cada posicion le asignamos toda la información de un estudiante
-        ArrayList<Handle> listaEstudiantes = new ArrayList<Handle>(estudiantes.length); // -- O(E)
+        ArrayList<HandleHeap> listaEstudiantes = new ArrayList<HandleHeap>(estudiantes.length); // -- O(E)
 
         for (int i = 0; i < estudiantes.length; i ++){ // -- E * O(1) = O(E)
-            listaEstudiantes.add(new Handle(estudiantes[i], i)); 
+            listaEstudiantes.add(new HandleHeap(estudiantes[i], i)); 
             // -- O(1) (real, no amortizado pues listaEstudiantes ya tiene espacio dispnible)
         }
 
@@ -20,12 +20,12 @@ public class MinHeap<T extends Comparable<T>> {
         // Complejidad Total: O(E) + O(E) = O(E)
     }
 
-    public class Handle {
-        private T _estudiante;
+    public class HandleHeap implements Handle<T> {
+        private T _valor;
         private int _posicionHeap;
 
-        public Handle(T est, int posicion){
-            _estudiante = est;
+        public HandleHeap(T est, int posicion){
+            _valor = est;
             _posicionHeap = posicion;
             // Complejidad Total: O(1)
         }
@@ -34,12 +34,16 @@ public class MinHeap<T extends Comparable<T>> {
             _posicionHeap = posicion; // Complejidad Total: O(1)
         }
 
-        public T valor() {return _estudiante;} // Complejidad Total: O(1)
+        public T valor() {return _valor;} // Complejidad Total: O(1)
         public int posicionHeap() {return _posicionHeap;} // Complejidad Total: O(1)
 
-        public void actualizarHeap(int posicion) {MinHeap.this.actualizar(posicion);} // Complejidad Total: O(log E)
-        public void subirHeap(int posicion) {MinHeap.this.subir(posicion);} // Complejidad Total: O(log E)
-        public Handle desencolarHeap() {return MinHeap.this.desencolar();} // Complejidad Total: O(log E)
+        public void actualizarValor(T a){
+            actualizar(_posicionHeap);
+        }
+
+        // public void actualizarHeap(int posicion) {MinHeap.this.actualizar(posicion);} // Complejidad Total: O(log E)
+        // public void subirHeap(int posicion) {MinHeap.this.subir(posicion);} // Complejidad Total: O(log E)
+        // public Handle desencolarHeap() {return MinHeap.this.desencolar();} // Complejidad Total: O(log E)
     }
 
     private int padre(int posicion) {
@@ -66,7 +70,7 @@ public class MinHeap<T extends Comparable<T>> {
     private void intercambiar(int padre, int hijo){
         // Dadas dos posiciones de la lista del heap, intercambiamos esos dos estudiantes y les actualizamos su posición del heap (guardada en el handle)
 
-        Handle nuevo_puntaje = _estudiantes.get(hijo);
+        HandleHeap nuevo_puntaje = _estudiantes.get(hijo);
         
         _estudiantes.set(hijo, _estudiantes.get(padre));
         _estudiantes.set(padre, nuevo_puntaje);
@@ -151,7 +155,7 @@ public class MinHeap<T extends Comparable<T>> {
         // O(log E) por definición de la operación bajar
     }
 
-    public Handle desencolar(){
+    public HandleHeap desencolar(){
         // Desencolo del Handle. Lo que hacemos es "sacar" el estudiante en la primera posición del heap, es decir, quién está en la raíz.
         // Pero en realidad no es que lo sacamos del array del heap, pues si quisiera tener un heap sin ese estudiante, debería de crear
         // un nuevo array con los estudiantes que de verdad se encuentran en l heap, pero eso superaría la complejidad permitida.
@@ -164,7 +168,7 @@ public class MinHeap<T extends Comparable<T>> {
         // hasta que se cumpla el invariante de representación del heap, es decir, hasta que mi array sea justamente un heap. Finalmente, devuelvo al estudiante desencolado.
 
         if (_tamaño > 0){
-            Handle aDevolver = _estudiantes.get(0);
+            HandleHeap aDevolver = _estudiantes.get(0);
 
             _estudiantes.get(0).actualizarPosicion(-1);
 
@@ -191,7 +195,7 @@ public class MinHeap<T extends Comparable<T>> {
         // Complejidad Total: O(log E)
     }
 
-    public void encolar(Handle elemento){
+    public void encolar(HandleHeap elemento){
         // Encuentro el primer null que hay en mi lista y lo piso con mi elemento a encolar. 
         // Como para encolar requiero que se haya desencolado, entonces _puntajes[tamaño] nunca se va a ir de rango y va a ser exactamente mi primer null del heap. 
         
@@ -204,7 +208,7 @@ public class MinHeap<T extends Comparable<T>> {
         // Complejidad Total: O(log E)
     }
 
-    private void subir(int posicion){
+    public void subir(int posicion){
         // Dado un estudiante (una posición en el heap), lo subo en el árbol hasta que su padre sea menor que él o que se convierta en la raíz del árbol.
         while (posicion != 0 && _estudiantes.get(padre(posicion)).valor().compareTo(_estudiantes.get(posicion).valor()) == -1){ // log E * O(1) = O(log E)
             intercambiar(padre(posicion), posicion);
