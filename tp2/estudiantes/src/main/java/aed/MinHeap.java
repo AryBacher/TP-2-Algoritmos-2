@@ -84,7 +84,7 @@ public class MinHeap<T extends Comparable<T>> {
         // Dado un heap (un array), creamos una lista ordenada y copiamos todos los Handles de ese heap a la lista ordenada.
 
         // De esta manera, queda en primer lugar la lista ordenada por id (al igual que el heap en un primer momento)
-        // y además, los handles que están en el heap son los mismos que en la lista (solo que van a estar en diferentes posiciones).
+        // y, además, los handles que están en el heap son los mismos que en la lista (solo que van a estar en diferentes posiciones).
         // Entonces, si yo cambio algún valor de un Handle que está en el heap, se va a cambiar en ese mismo Handle de la lista ordenada.
 
         // Una vez que tenemos el heap y la lista ordenada por id, ahora sí corremos el algoritmo de Floyd sobre el heap para que quede ordenado correctamente.
@@ -119,8 +119,8 @@ public class MinHeap<T extends Comparable<T>> {
 
     private void bajar(int padre){
         // Dado un padre de un árbol (un minHeap), lo bajamos en el árbol recursivamente hasta que sus hijos sean ambos mayores que él
-        // o hasta que ese mismo elemento se convierta en una hoja del árbol. Este es nuestro caso base, y sucede cuando la posición del hijo izquierdo
-        // es mayor a la longitud del heap, es decir, esa posición no existe, y por lo tanto, ese elemento no tiene hijos, pues el árbol es izquierdista
+        // o hasta que ese mismo elemento se convierta en una hoja del árbol. Este es nuestro caso base y sucede cuando la posición del hijo izquierdo
+        // es mayor a la longitud del heap, es decir, esa posición no existe y, por lo tanto, ese elemento no tiene hijos, pues el árbol es izquierdista
 
         // Caso Base
 
@@ -157,13 +157,13 @@ public class MinHeap<T extends Comparable<T>> {
     public HandleHeap<T> desencolar(){
         // Desencolo del Handle. Lo que hacemos es "sacar" el estudiante en la primera posición del heap, es decir, quién está en la raíz.
         // Pero en realidad no es que lo sacamos del array del heap, pues si quisiera tener un heap sin ese estudiante, debería de crear
-        // un nuevo array con los estudiantes que de verdad se encuentran en l heap, pero eso superaría la complejidad permitida.
+        // un nuevo array con los estudiantes que de verdad se encuentran en el heap, pero eso superaría la complejidad permitida.
 
-        // Lo que hacemos entonces, es decir que el estudiante que desencolamos tiene como posición en el heap al -1, y vamos a cambiar su contenido a null.
+        // Lo que hacemos, entonces, es decir que el estudiante que desencolamos tiene como posición en el heap al -1 y vamos a cambiar su contenido a null.
         // La manera que tenemos de conocer la cantidad de estudiantes en el heap es mediante el atributo _tamaño, el cual se va restando cuando se desencola.
         
         // Para poder hacer todo esto, nos dirijimos a la última posición (donde está el último estudiante) y lo intercambio con el primer lugar (la raíz).
-        // Cuando actualizo las posiciones en el array, y le pongo null al estudiante desencolado, tengo que sobre mi nueva raíz, bajar a ese elemento 
+        // Cuando actualizo las posiciones en el array y le pongo null al estudiante desencolado, tengo que sobre mi nueva raíz, bajar a ese elemento 
         // hasta que se cumpla el invariante de representación del heap, es decir, hasta que mi array sea justamente un heap. Finalmente, devuelvo al estudiante desencolado.
 
         if (_tamaño > 0){

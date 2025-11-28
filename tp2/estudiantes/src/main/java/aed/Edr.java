@@ -103,7 +103,6 @@ public class Edr {
                 // Me copio de esa respuesta
                 miEstudiante.valor().actualizarRespuestaRapido(i, respuestasVecino[i], _examenCanonico); // -- O(1)
                 miEstudiante.actualizarValor(miEstudiante.valor()); // -- O(log E)
-                //_minHeap.actualizar(miEstudiante.posicionHeap()); // -- O(log E)
             }
 
             // Complejidad Total: O(R) + O(R) + O(log E) = O(R + log E)
@@ -115,8 +114,8 @@ public class Edr {
         int[] misRespuestas = _listaOrdenada.accederAPosicion(estudiante).valor().respuestas(); // -- O(1)
         int[] respuestasVecino = _listaOrdenada.accederAPosicion(vecino).valor().respuestas(); // -- O(1)
 
-        // Si en una posición hay un -1, significa que ese estudiante no tiene una respuesta completada,
-        // luego, cuando no hay un -1, sumamos 1 al contador.
+        // Si en una posición hay un -1, significa que ese estudiante no tiene una respuesta completada.
+        // Luego, cuando no hay un -1, sumamos 1 al contador.
         
         for (int i = 0; i < misRespuestas.length; i ++){ // -- R * O(1) = O(R)
             if (misRespuestas[i] == -1 && respuestasVecino[i] != -1){
@@ -130,12 +129,19 @@ public class Edr {
     }
 
     public int[] vecinos(int posicion){
-        // La posición es el id del estudiante. Como convención, tenemos una lista de 3 posiciones (cantidad máxima de vecinos posibles).
-        // En la 1era posición guardamos el vecino de la izquierda, en la 2da el vecino de la derecha, y en la 3era el de adelante.
-        // Si no hay un vecino en alguna de esas posiciones, guardamos un -1. 
+        // La posición es el id del estudiante. Como convención tenemos una lista de 3 posiciones (cantidad máxima de vecinos posibles).
+        // En la 1ra posición guardamos el vecino de la izquierda, en la 2da el vecino de la derecha y en la 3ra el de adelante.
+        // Si no hay un vecino en alguna de esas posiciones guardamos un -1. 
         
         int[] vecinos = new int[3]; // -- O(3) = O(1)
-        int estPorFila = (int) Math.ceil(((double) _ladoAula) / 2);
+        int estPorFila;
+
+        if (_ladoAula % 2 == 0) {
+            estPorFila = _ladoAula / 2;
+        } 
+        else {
+            estPorFila = (_ladoAula / 2) + 1;
+        }
 
         if (_cantEstudiantes == 1) {return null;}
 
@@ -167,7 +173,7 @@ public class Edr {
                 vecinos[1] = -1;
             }
 
-            // Me fijo que no estoy en la 1era fila y agrego al de adelante
+            // Me fijo que no estoy en la 1ra fila y agrego al de adelante
             if (posicion != 0){
                 vecinos[2] = posicion - estPorFila;
             }
@@ -207,7 +213,7 @@ public class Edr {
                 vecinos[1] = -1;
             }
 
-            // Me fijo que no estoy en la 1era fila y agrego al de adelante
+            // Me fijo que no estoy en la 1ra fila y agrego al de adelante
             if (posicion >= estPorFila){
                 vecinos[2] = posicion - estPorFila;
             }
@@ -246,9 +252,9 @@ public class Edr {
 //------------------------------------------------CONSULTAR DARK WEB-------------------------------------------------------
 
     public void consultarDarkWeb(int n, int[] examenDW) {
-        // n estudiantes se copian de la dark web. Para eso, primero necesitamos saber quienes son los n estudiantes
-        // con la peor nota. Por eso primero los desencolamos del heap, les actualizamos sus respuestas y sus notas (copiadas de la dark web),
-        // y una vez tenemos eso, recién ahí podemos encolar a esos estudiantes con sus nuevos puntajes, y que se pueda reordenar el heap.
+        // n estudiantes se copian de la dark web. Para eso, primero necesitamos saber quiénes son los n estudiantes
+        // con la peor nota. Por eso primero los desencolamos del heap, les actualizamos sus respuestas y sus notas (copiadas de la dark web)
+        // y, una vez tenemos eso, recién ahí podemos encolar a esos estudiantes con sus nuevos puntajes y que se pueda reordenar el heap.
 
         ArrayList<MinHeap<Estudiante>.HandleHeap<Estudiante>> copiados = new ArrayList<MinHeap<Estudiante>.HandleHeap<Estudiante>>(n); // -- O(k), con k = n
 
@@ -270,8 +276,8 @@ public class Edr {
     public void entregar(int estudiante) {
         // Dado un estudiante, este entrega su examen.
 
-        // Luego de que entrega su examen, cambia su valor de entregado a verdadero, luego,
-        // cuando quiero actualizar el heap, este estudiante está garantizado a terminar abajo de todo
+        // Luego de que entrega su examen cambia su valor de entregado a verdadero. Luego,
+        // cuando quiero actualizar el heap, este estudiante está garantizado a terminar abajo de todo,
         // pues sería justamente uno de los que ya entregó y sigue en el heap. 
 
         MinHeap<Estudiante>.HandleHeap<Estudiante> miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
@@ -291,7 +297,7 @@ public class Edr {
         NotaFinal[] notasFinales = new NotaFinal[_noSospechososDeCopia.size()]; // -- O(E)
 
         // Por cada estudiante, lo desencolo del heap y ya queda ordenado 
-        // de manera descendente en notasFinales. Para cada estudiante, le creamos su notaFinal.
+        // de manera descendente en notasFinales. Para cada estudiante le creamos su notaFinal.
 
         int contador = _noSospechososDeCopia.size() - 1;
         for (int i = 0; i < _cantEstudiantes; i ++){ // E * O(log E) = O(E * log E)
@@ -315,10 +321,10 @@ public class Edr {
     public int[] chequearCopias() {
         int[][] conteosPorPregunta = new int[_examenCanonico.length][10];
         
-        // Tengo una matriz para contar cuantas respuestas hay por cada pregunta.
+        // Tengo una matriz para contar cuántas respuestas hay por cada pregunta.
         // Por ejemplo, para la primera pregunta, si hay 7 estudiantes que respondieron "4", 
-        // y 3 que respondieron "2", en la primera lista del array, va a haber ceros en todas las 
-        // posiciones, menos en la posición 4, que habrá un 7, y en la posición 2, habrá un 3.
+        // y 3 que respondieron "2", en la primera lista del array va a haber ceros en todas las 
+        // posiciones, menos en la posición 4, que habrá un 7 y en la posición 2 habrá un 3.
 
         for (int pregunta = 0; pregunta < _examenCanonico.length; pregunta ++) { // -- R * O(E) = O(E * R)
             for (int est = 0; est < _cantEstudiantes; est++) { // -- E * O(1) = O(E)
@@ -370,7 +376,7 @@ public class Edr {
             }
         }
 
-        // Vemos quienes son los estudiantes que se copiaron y los devolvemos.
+        // Vemos quiénes son los estudiantes que se copiaron y los devolvemos.
         int[] estudiantesCopiados = new int[sospechosos.size()];
         for (int i = 0; i < sospechosos.size(); i++) { // -- E * O(1) = O(E)
             estudiantesCopiados[i] = sospechosos.get(i);
