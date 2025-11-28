@@ -26,8 +26,8 @@ public class Edr {
     }
 
     private Estudiante[] listaDeEstudiantes(int cantEstudiantes, int cantRespuestas){
-        // Dada una cantidad de estudiantes (E) y una cantidad de respuestas (R), creamos E estudiantes,
-        // donde cada uno tiene un exámen sin completar de R posiciones y devolvemos ese array de estudiantes.
+        // Dada una cantidad de estudiantes (E) y una cantidad de respuestas (R), creamos E estudiantes
+        // donde cada uno tiene un examen sin completar de R posiciones y devolvemos ese array de estudiantes.
 
         Estudiante[] listaDeEstudiantes = new Estudiante[cantEstudiantes]; // -- O(E)
 
@@ -43,8 +43,8 @@ public class Edr {
 //-------------------------------------------------NOTAS--------------------------------------------------------------------------
 
     public double[] notas(){
-        // Devolvemos la nota de todos los estudiantes ordenado por id. Para eso simplemente, accedemos a la nota (puntaje) de cada estudiante
-        // accediendo desde la lista ordenada
+        // Devolvemos la nota de todos los estudiantes ordenado por id. Para eso, simplemente accedemos a la nota (puntaje) de cada estudiante
+        // desde la lista ordenada.
 
         double[] listaDeNotas = new double[_cantEstudiantes]; // -- O(E)
 
@@ -69,7 +69,7 @@ public class Edr {
             int maximo = 0;
             int idMaximo = -1;
 
-            // Recorro los 3 posibles vecinos que tengo y me fijo cual de ellos tiene la cantidad de respuestas máxima.
+            // Recorro los 3 posibles vecinos que tengo y me fijo cuál de ellos tiene la cantidad de respuestas máxima.
             // Si hay 2 o más que tienen la misma cantidad de respuestas, desempato por id mayor, para eso me voy guardando el máximo de respuestas y el mayor id.
             for (int i = 0; i < 3; i ++){ // 3 * O(R) = O(3R) = O(R)
                 if (misVecinos[i] != -1){
@@ -235,7 +235,6 @@ public class Edr {
         
         miEstudiante.valor().actualizarRespuestaRapido(NroEjercicio, res, _examenCanonico); // -- O(1)
         miEstudiante.actualizarValor(miEstudiante.valor()); // -- O(log E)
-        //_minHeap.actualizar(miEstudiante.posicionHeap()); // -- O(log E)
 
         // Complejidad Total: O(log E)
     } 
@@ -272,20 +271,16 @@ public class Edr {
         // Dado un estudiante, este entrega su examen.
 
         // Luego de que entrega su examen, cambia su valor de entregado a verdadero, luego,
-        // cuando quiero actualizar el heap, este estudiante está garantizado a terminar arriba de todo
-        // pues sería justamente el único que ya entregó y sigue en el heap. Por lo tanto
-        // puedo desencolarlo del heap (y voy a desencolar a ese estudiante) y el heap se reordena.
+        // cuando quiero actualizar el heap, este estudiante está garantizado a terminar abajo de todo
+        // pues sería justamente uno de los que ya entregó y sigue en el heap. 
 
         MinHeap<Estudiante>.HandleHeap<Estudiante> miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
 
+        // El estudiante entrega y se actualiza el heap para que vaya abajo del heap.
+
         miEstudiante.valor().entregar();
 
-        _minHeap.eliminar(estudiante);
-        // miEstudiante.eliminarValor(estudiante);
-
-        // _minHeap.subir(miEstudiante.posicionHeap()); // -- O(log E)
-
-        // _minHeap.desencolar(); // -- O(log E)
+        miEstudiante.actualizarValor(miEstudiante.valor()); // -- O(log E)
 
         // Complejidad Total: O(log E) + O(log E) = O(log E)
     }
@@ -294,29 +289,25 @@ public class Edr {
 
     public NotaFinal[] corregir() {
         NotaFinal[] notasFinales = new NotaFinal[_noSospechososDeCopia.size()]; // -- O(E)
-        Estudiante[] listaEstudiantes = new Estudiante[_noSospechososDeCopia.size()]; // -- O(E)
-        
-        for (int i = 0; i < _noSospechososDeCopia.size(); i ++){ // E * O(1) = O(E)
-            listaEstudiantes[i] = _listaOrdenada.accederAPosicion(_noSospechososDeCopia.get(i)).valor();
-        }
-        
-        // Como el heap está vació, tenemos que armarlo con todos los estudiantes que no se hayan copiado
-        // Esto lo hacemos con el algoritmo de Floyd.
-        _minHeap = new MinHeap<Estudiante>(listaEstudiantes); // -- O(E)
-        _minHeap.algoritmoDeFloyd(); // -- O(E)
 
-        // Luego, por cada estudiante, lo desencolo del heap y ya queda ordenado 
+        // Por cada estudiante, lo desencolo del heap y ya queda ordenado 
         // de manera descendente en notasFinales. Para cada estudiante, le creamos su notaFinal.
-        for (int i = _noSospechososDeCopia.size() - 1; i >= 0; i --){ // E * O(log E) = O(E * log E)
-            MinHeap<Estudiante>.HandleHeap<Estudiante> est = _minHeap.desencolar(); // -- O(log E)
-            NotaFinal nota = new NotaFinal(est.valor().puntaje(), est.valor().id()); // -- O(1)
 
-            notasFinales[i] = nota;
+        int contador = _noSospechososDeCopia.size() - 1;
+        for (int i = 0; i < _cantEstudiantes; i ++){ // E * O(log E) = O(E * log E)
+            MinHeap<Estudiante>.HandleHeap<Estudiante> est = _minHeap.desencolar(); // -- O(log E)
+
+            if (est.valor().seCopio() == false){
+                NotaFinal nota = new NotaFinal(est.valor().puntaje(), est.valor().id()); // -- O(1)
+
+                notasFinales[contador] = nota;
+                contador --;
+            }
         }
 
         return notasFinales;
 
-        // Complejidad Total: 5 * O(E) + O(E * log E) = O(E * log E)
+        // Complejidad Total: O(E) + O(E * log E) = O(E * log E)
     }
 
 //-------------------------------------------------------CHEQUEAR COPIAS-------------------------------------------------
@@ -370,6 +361,8 @@ public class Edr {
             
             if (esSospechoso && tieneRespuestas) {
                 sospechosos.add(est);
+                MinHeap<Estudiante>.HandleHeap<Estudiante> miEstudiante = _listaOrdenada.accederAPosicion(est);
+                miEstudiante.valor().copiarse();
             }
 
             else{

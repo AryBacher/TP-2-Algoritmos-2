@@ -37,12 +37,12 @@ public class MinHeap<T extends Comparable<T>> {
         public S valor() {return _valor;} // Complejidad Total: O(1)
         public int posicionHeap() {return _posicionHeap;} // Complejidad Total: O(1)
 
-        public void actualizarValor(S valor){actualizar(_posicionHeap);}
-        // public void eliminarValor(int posicion) {eliminar(posicion);}
+        public void actualizarValor(S valor) {
+            _valor = valor;
+            actualizar(_posicionHeap); // O(log E)
 
-        // public void actualizarHeap(int posicion) {MinHeap.this.actualizar(posicion);} // Complejidad Total: O(log E)
-        // public void subirHeap(int posicion) {MinHeap.this.subir(posicion);} // Complejidad Total: O(log E)
-        // public Handle desencolarHeap() {return MinHeap.this.desencolar();} // Complejidad Total: O(log E)
+            // Complejidad Total: O(log E)
+        }
     }
 
     private int padre(int posicion) {
@@ -221,33 +221,15 @@ public class MinHeap<T extends Comparable<T>> {
     public void actualizar(int posicion){
         // Dado un estudiante, quiero actualizar su posición en el heap porque se cambió su puntaje o su estado de entrega.
 
-        // Cuando quiero actualizar la posición, en nuestro caso en partícular, el puntaje de un estudiante nunca puede bajar, solo subir,
-        // y lo mismo para entregar, no puedo pasar de haber entregado a no haberlo hecho. Luego, simplemente puedo bajar a esa persona que actualizo.
+        // Cuando quiero actualizar la posición, podemos subir y bajar un estudiante a la vez.
+        // Por el invariante de representación del heap, dado un estudiante puesto en una posición cualquiera del heap,
+        // este solo puede bajar o subir (exclusivamente). Por lo tanto, si hago subir y bajar, uno no va a hacer nada y se me va a ordenar 
+        // el heap como necesitábamos. 
         
+        subir(posicion); // -- O(log E)
         bajar(posicion); // -- O(log E)
 
         // Complejidad Total: O(log E)
-    }
-
-    public void eliminar(int posicion){
-
-        if (posicion == _tamaño - 1){
-            _tamaño = _tamaño - 1;
-        }
-        
-        else if (_tamaño == 1){
-            _heap.set(0, null);
-            _tamaño = _tamaño - 1;
-        }
-
-        else {
-            intercambiar(posicion, _tamaño - 1);
-
-            _tamaño = _tamaño - 1;
-
-            subir(posicion);
-            bajar(posicion);
-        }
     }
 }
 
