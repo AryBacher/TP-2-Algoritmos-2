@@ -37,7 +37,7 @@ public class MinHeap<T extends Comparable<T>> {
         public S valor() {return _valor;} // Complejidad Total: O(1)
         public int posicionHeap() {return _posicionHeap;} // Complejidad Total: O(1)
 
-        public void actualizarValor(S a){actualizar(_posicionHeap);}
+        public void actualizarValor(S valor){actualizar(_posicionHeap);}
         public void eliminarValor(int posicion) {eliminar(posicion);}
 
         // public void actualizarHeap(int posicion) {MinHeap.this.actualizar(posicion);} // Complejidad Total: O(log E)

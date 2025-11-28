@@ -102,7 +102,8 @@ public class Edr {
 
                 // Me copio de esa respuesta
                 miEstudiante.valor().actualizarRespuestaRapido(i, respuestasVecino[i], _examenCanonico); // -- O(1)
-                _minHeap.actualizar(miEstudiante.posicionHeap()); // -- O(log E)
+                miEstudiante.actualizarValor(miEstudiante.valor()); // -- O(log E)
+                //_minHeap.actualizar(miEstudiante.posicionHeap()); // -- O(log E)
             }
 
             // Complejidad Total: O(R) + O(R) + O(log E) = O(R + log E)
@@ -218,7 +219,8 @@ public class Edr {
         MinHeap<Estudiante>.HandleHeap<Estudiante> miEstudiante = _listaOrdenada.accederAPosicion(estudiante);
         
         miEstudiante.valor().actualizarRespuestaRapido(NroEjercicio, res, _examenCanonico); // -- O(1)
-        _minHeap.actualizar(miEstudiante.posicionHeap()); // -- O(log E)
+        miEstudiante.actualizarValor(miEstudiante.valor()); // -- O(log E)
+        //_minHeap.actualizar(miEstudiante.posicionHeap()); // -- O(log E)
 
         // Complejidad Total: O(log E)
     } 
